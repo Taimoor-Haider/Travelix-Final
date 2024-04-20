@@ -1,0 +1,101 @@
+.search-bar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+  padding: 0.5rem 0;
+}
+
+.search-input-wrapper {
+  position: relative;
+  /* background-color: lightblue; */
+  margin-right: 10px;
+}
+
+.search-input-wrapper input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  font-size: 16px;
+
+  width: 15rem;
+}
+
+.search-input-wrapper svg {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#trending-car-heading svg {
+  width: 6rem !important;
+}
+
+.car-search-select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 0 0.5rem;
+  background-color: #fff;
+  /* color: #333; */
+  outline: none;
+  /* border: none; */
+}
+
+.car-search-select {
+  background-color: rgba(0, 0, 0, 0.03);
+  outline: none;
+  font-size: 16px;
+}
+
+.car-search-select option {
+  outline: none;
+  /* background-color: red; */
+  /* padding: 20px; */
+  /* padding-top: 5rem; */
+}
+
+.car-reset-btn {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #008ec4;
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  margin-left: 8px;
+
+  cursor: pointer;
+  width: 5rem;
+}
+
+.car-reset-btn:hover {
+  background-color: #1195c8;
+}
+
+/* =======> TOP CARS SECTION <============ */
+
+#trending-cars-section {
+  margin-top: 3rem;
+}
+
+#trending-cars {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  /* gap: 5rem; */
+}
+
+#max-price-filter-wrapper {
+  position: relative;
+}
+
+.price-warning {
+  position: absolute;
+  color: red;
+}

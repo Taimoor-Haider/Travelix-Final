@@ -1,0 +1,40 @@
+.j-main-container {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.j-reg-img-container {
+  flex: 1;
+  /* background-color:red; */
+  display: flex;
+  /* flex-direction: ; */
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.j-reg-img-container img {
+  max-height: 100%;
+  object-fit: contain;
+  max-width: 90%;
+  margin-top: 3rem;
+  transition: transform 0.3s ease-out, filter 0.3s ease-out;
+}
+
+.j-reg-img-container:hover img {
+  transform: scale(1.05);
+}
+
+.j-form-container {
+  flex: 1;
+  /* background-color:bisque; */
+}
+
+.j-reg-title {
+  margin: 0 !important;
+}
+
+.j-reg-fileInput {
+  display: flex;
+  flex-direction: column;
+}

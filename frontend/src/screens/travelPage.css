@@ -1,0 +1,42 @@
+.travel-search-bar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+  padding: 0.5rem 0;
+  flex-wrap: wrap;
+}
+
+.travel-search-select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 0 0.5rem;
+  background-color: #fff;
+  /* color: #333; */
+  outline: none;
+  font-size: 16px;
+  background-color: rgba(0, 0, 0, 0.03);
+
+  /* border: none; */
+}
+
+.travel-search-btn {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #008ec4;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  width: 6rem;
+  font-size: 16px;
+  margin-left: 8px;
+}
+
+.travel-search-btn:hover {
+  background-color: #1195c8;
+}
+
+#trending-travel-heading svg {
+  width: 11rem !important;
+}
