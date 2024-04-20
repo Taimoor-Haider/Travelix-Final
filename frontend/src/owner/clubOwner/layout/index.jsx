@@ -4,7 +4,7 @@ import Sidebar from "../components/sidebar";
 
 export default function Layout({ children }) {
   return (
-    <div className="app-container">
+    <div className="app-container" style={{ backgroundColor: "white" }}>
       <div className="header">
         <Sidebar />
       </div>

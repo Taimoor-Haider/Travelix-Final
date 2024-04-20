@@ -39,7 +39,6 @@ import { loginSelector } from "./features/auth/loginSlice";
 import VehicleDetailPage from "./owner/pages/VehicleDetailPage";
 import FeedBackResponse from "./owner/components/FeedBackResponse";
 import VehicleEditPage from "./owner/pages/VehicleEditPage";
-
 //============================HOTEL OWNERS =============================
 import HotelOwnerLayout from "./owner/hotelOwner/layout";
 import HotelDashboard from "./owner/hotelOwner/pages/dashboard";
