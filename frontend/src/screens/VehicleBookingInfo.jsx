@@ -10,10 +10,13 @@ import Logo from "../../src/assets/infoAnim.json";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
-  fullName: Yup.string().min(3).required("Full name is required"),
+  fullName: Yup.string()
+    .min(3, "Full name must be at least 3 characters")
+    .required("Full name is required"),
   cnic: Yup.string()
-    .matches(/^\d{13}$/, "CNIC must be 13 digits long")
+    .matches(/^\d{13}$/, "CNIC must be exactly 13 digits")
     .required("CNIC is required"),
+  gender: Yup.string().required("Gender is required"),
 });
 
 const initialValues = {

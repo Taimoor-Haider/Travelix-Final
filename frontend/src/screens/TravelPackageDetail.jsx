@@ -148,10 +148,10 @@ function TravelPackageDetail() {
                           {tourPackage.travelClubName}
                         </p>
                         <p className="text-[1.2rem] font-normal">
-                          {tourPackage.travelClub.tourOwner?.name}
+                          {tourPackage.tourOwner?.name}
                         </p>
                         <p className="font-light text-[0.9rem] tracking-widest">
-                          {tourPackage.travelClub.tourOwner?.name}
+                          {tourPackage.tourOwner?.name}
                         </p>
                       </div>
                     </div>

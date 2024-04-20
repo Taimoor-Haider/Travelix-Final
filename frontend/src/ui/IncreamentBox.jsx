@@ -3,7 +3,6 @@ import React from "react";
 function IncreamentBox({
   tourPackage,
   mainText,
-  subText,
   persons,
   totalPersons,
   inc,
@@ -13,7 +12,6 @@ function IncreamentBox({
     <div className="flex justify-between items-center">
       <div>
         <p className="text-lg ">{mainText}</p>
-        <p className="text-xs">{subText}</p>
       </div>
       <div className="flex justify-center gap-5 items-center">
         <div>
@@ -36,13 +34,15 @@ function IncreamentBox({
           </button>
         </div>
         <div>
-          {totalPersons === 1 && mainText === "Adult" ? totalPersons : persons}
+          {totalPersons === 1 && mainText === "Persons"
+            ? totalPersons
+            : persons}
         </div>
         <div>
           <button
             className="btn btn-circle"
             onClick={dec}
-            disabled={mainText === "Adult" && totalPersons === 1}
+            disabled={mainText === "Persons" && totalPersons === 1}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

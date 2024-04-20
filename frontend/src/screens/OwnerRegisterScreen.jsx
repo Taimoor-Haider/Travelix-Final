@@ -28,14 +28,40 @@ function OwnerRegisterScreen() {
   const navigate = useNavigate();
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string().required("Name is required"),
-    email: Yup.string().email("Invalid email").required("Email is required"),
-    phone: Yup.string().required("Phone number is required"),
-    password: Yup.string().required("Password is required"),
+    name: Yup.string()
+      .min(3, "Full name must be at least 3 characters")
+      .required("Name is required"),
+    email: Yup.string()
+      .matches(
+        /^[a-zA-Z0-9.]+@[a-zA-Z]+\.[a-zA-Z]{2,}$/,
+        "Invalid email format"
+      )
+      .required("Email is required"),
+    phone: Yup.string()
+      .matches(
+        /^[0-9]{11}$/,
+        "Number must be 11 digits and contain only numbers"
+      )
+      .required("Account number is required"),
+    password: Yup.string()
+      .min(8, "Password must be at least 8 characters")
+      .required("Password is required"),
     address: Yup.string().required("Address is required"),
-    accountNumber: Yup.string().required("Account number is required"),
-    accountName: Yup.string().required("Account name is required"),
-    bankName: Yup.string().required("Bank name is required"),
+    accountNumber: Yup.string()
+      .matches(
+        /^[0-9]{13}$/,
+        "Account number must be 13 digits and contain only numbers"
+      )
+      .required("Account number is required"),
+    accountName: Yup.string()
+      .matches(
+        /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9]{3,}$/,
+        "Account number must contain at least 3 alphanumeric characters"
+      )
+      .required("Account number is required"),
+    bankName: Yup.string()
+      .matches(/^\D+$/, "Account name must not contain digits")
+      .required("Account name is required"),
   });
 
   const formik = useFormik({

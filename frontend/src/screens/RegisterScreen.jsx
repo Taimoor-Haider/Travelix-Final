@@ -70,7 +70,7 @@ function RegisterScreen() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/register",
+        "https://travelix-backend-v2.vercel.app/api/users",
         formData,
         {
           headers: {

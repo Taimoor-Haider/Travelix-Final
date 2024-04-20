@@ -8,6 +8,8 @@ import {
   addTravellersInfo,
 } from "../features/tour/tourbookingSlice";
 import { packageFormSelector } from "../features/PackageFromSlice";
+import { useLottie } from "lottie-react";
+import Logo from "../../src/assets/infoAnim.json";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -16,7 +18,11 @@ function BookingInfo() {
   const navigate = useNavigate();
 
   const { noOfPersons } = useSelector(packageFormSelector);
-
+  const options = {
+    animationData: Logo,
+    loop: true,
+  };
+  const { View } = useLottie(options);
   const validationSchema = Yup.object().shape({
     fullName: Yup.string()
       .min(3, "Full name must be at least 3 characters")
@@ -29,11 +35,20 @@ function BookingInfo() {
       Yup.object().shape({
         email: Yup.string()
           .email("Invalid email")
+          .matches(
+            /^[a-zA-Z0-9.]+@[a-zA-Z]+\.[a-zA-Z]{2,}$/,
+            "Invalid email format"
+          )
           .required("Email is required"),
         cnic: Yup.string()
           .matches(/^\d{13}$/, "CNIC must be exactly 13 digits")
           .required("CNIC is required"),
-        number: Yup.string().required("Number is required"),
+        number: Yup.string()
+          .matches(
+            /^[0-9]{11}$/,
+            "Number must be 11 digits and contain only numbers"
+          )
+          .required("Account number is required"),
       })
     ),
   });
@@ -64,7 +79,7 @@ function BookingInfo() {
     <>
       <CheckSteps step1 step2 />
       <div className="grid grid-cols-[1fr_1.5fr]">
-        <div>Animation</div>
+        <div className="self-center">Animation</div>
         <div>
           <form
             className="flex max-w-[80%] mx-auto flex-col gap-4"

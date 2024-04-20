@@ -9,8 +9,7 @@ import { setDate, setPersons } from "../features/PackageFromSlice";
 function PackageForm({ tourPackage }) {
   const [selectedDate, setSelectedDate] = useState("");
   const [numOfPersons, setNumOfPersons] = useState(1);
-  const [adults, setAdults] = useState(0);
-  const [children, setChildren] = useState(0);
+  const [adults, setAdults] = useState(1);
 
   const { date, noOfPersons } = useSelector(packageFormSelector);
   const dispatch = useDispatch();
@@ -23,13 +22,13 @@ function PackageForm({ tourPackage }) {
 
   useEffect(() => {
     const handleNumberOfPersons = () => {
-      if (adults === 0 && children === 0) {
+      if (adults === 0) {
         return;
       }
-      setNumOfPersons(adults + children);
+      setNumOfPersons(adults);
     };
     handleNumberOfPersons();
-  }, [adults, children]);
+  }, [adults]);
 
   const handleAdultIncreament = () => {
     setAdults((pre) => pre + 1);
@@ -39,16 +38,6 @@ function PackageForm({ tourPackage }) {
       return;
     }
     setAdults((pre) => pre - 1);
-  };
-
-  const handleChildIncreament = () => {
-    setChildren((pre) => pre + 1);
-  };
-  const handleChildDecreament = () => {
-    if (children == 0) {
-      return;
-    }
-    setChildren((pre) => pre - 1);
   };
 
   // Handle selection change
@@ -87,17 +76,7 @@ function PackageForm({ tourPackage }) {
             inc={handleAdultIncreament}
             dec={handleAdultDecreament}
             tourPackage={tourPackage}
-            mainText="Adult"
-            subText="Age 13+"
-          />
-          <IncreamentBox
-            persons={children}
-            totalPersons={numOfPersons}
-            inc={handleChildIncreament}
-            dec={handleChildDecreament}
-            tourPackage={tourPackage}
-            mainText="Children"
-            subText="Age 2-12"
+            mainText="Persons"
           />
         </div>
       </details>
@@ -110,7 +89,7 @@ function PackageForm({ tourPackage }) {
         size="sm"
         className="p-5 flex justify-center items-center"
       >
-        {tourPackage.price}/-Rs
+        {tourPackage.price}/-Rs per person
       </Badge>
     </>
   );
