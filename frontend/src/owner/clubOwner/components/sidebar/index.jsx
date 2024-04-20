@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { loginSelector } from "../../../../features/auth/loginSlice";
 import { useDispatch } from "react-redux";
 import { becomeUser } from "../../../../features/tourOwner/tourListSlice";
+
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -31,8 +32,7 @@ const Sidebar = () => {
   ];
   const userProfile = {
     name: "Admin Name",
-    imageUrl:
-      "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg", // Placeholder image, replace with actual profile image URL
+    imageUrl: `http://localhost:3000/${userInfo?.image}`, // Placeholder image, replace with actual profile image URL
   };
 
   const handleTourVehicle = (path) => {

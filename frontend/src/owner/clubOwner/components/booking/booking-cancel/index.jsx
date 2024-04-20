@@ -32,7 +32,7 @@ const CancelBooking = ({ bookingId, onCancel }) => {
                     Notify by SMS
                 </label>
             </div>
-            <button onClick={handleCancel}>Confirm Cancellation</button>
+            <button id="j-club-btn-cancel" onClick={handleCancel}>Confirm Cancellation</button>
         </div>
     );
 };
