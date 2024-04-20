@@ -9,16 +9,23 @@ import Loader from "../../../components/Loader";
 import Message from "../../../components/Message";
 import axios from "axios";
 import DateSelector from "../components/DateSelector";
+import ConfirmationModal from "../../../components/ConfirmationModal";
 
 function TourEditPage() {
-  const { id } = useParams(); // Assuming the Tour ID is passed as a URL parameter
+  const { id } = useParams();
   const { userInfo } = useSelector(loginSelector);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [tour, setTour] = useState(null); // State variable to store Tour details
+  const [tour, setTour] = useState(null);
   const [error, setError] = useState(null);
+  const [durationWarning, setDurationWarning] = useState("");
+  const [duration, setDuration] = useState("");
+  const [confirm, setConfirm] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     const fetchEditTour = async () => {
       try {
@@ -44,62 +51,73 @@ function TourEditPage() {
     setSelectedFiles(e.target.files);
   };
 
+  const handleDuration = (e) => {
+    if (!isNaN(Number(e.target.value))) {
+      setTour({ ...tour, duration: e.target.value });
+      setDuration(e.target.value);
+      setDurationWarning("");
+    } else {
+      setDurationWarning("Duration must be a positive number");
+    }
+  };
+
+  const handleNegativeDuration = (e) => {
+    if (e.key === "-" || e.key === "-" || isNaN(Number(e.target.value))) {
+      e.preventDefault();
+      setDurationWarning("Duration must be a positive number");
+    }
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      let uploadedFileNames = [];
-      if (selectedFiles.length > 0) {
-        uploadedFileNames = await uploadPhoto(selectedFiles);
-        console.log("Uplaoded file names: " + uploadedFileNames);
-        console.log("Selected Files: " + selectedFiles);
-      }
-      // Assuming selectedFiles is defined somewhere in your code
-
-
-      const requestData = {
-        place: tour.place,
-        title: tour.title,
-        description: tour.description,
-        city: tour.city,
-        images: uploadedFileNames.length > 0 ? uploadedFileNames : tour.images,
-        duration: tour.duration,
-        personsAllowed: tour.personsAllowed,
-        amenities: tour.amenities.filter((amenity) => amenity !== ""), // Remove empty features
-        availableDates: tour.availableDates,
-        price: tour.price,
-        latitude: tour.latitude,
-        longitude: tour.longitude,
-      };
-      const response = await axios.put(
-        `http://localhost:3000/api/tours/${id}`,
-        requestData
-      );
-      console.log("Response:", response.data);
-    } catch (error) {
-      console.log(error.message);
+    // Check if amenities are empty
+    if (tour.amenities.length === 0) {
+      alert("Amenities cannot be empty. Please select at least one amenity.");
+      return; // Prevent form submission
     }
-    navigate("/product/tours");
-    window.location.reload();
+    setShowModal(true); // Show the confirmation modal
   };
 
-  // const uploadPhoto = async (files) => {
-  //   const formData = new FormData();
-  //   for (let i = 0; i < files?.length; i++) {
-  //     formData.append("photos", files[i]);
-  //   }
-  //   const { data: fileNames } = await axios.post(
-  //     "http://localhost:3000/upload",
-  //     formData,
-  //     {
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //     }
-  //   );
-  //   return fileNames;
-  // };
+  const handleConfirmation = async (confirm) => {
+    if (confirm) {
+      try {
+        let uploadedFileNames = [];
+        if (selectedFiles.length > 0) {
+          uploadedFileNames = await uploadPhoto(selectedFiles);
+          console.log("Uplaoded file names: " + uploadedFileNames);
+          console.log("Selected Files: " + selectedFiles);
+        }
 
+        const requestData = {
+          place: tour.place,
+          title: tour.title,
+          description: tour.description,
+          images:
+            uploadedFileNames.length > 0 ? uploadedFileNames : tour.images,
+          duration: tour.duration,
+          personsAllowed: tour.personsAllowed,
+          amenities: tour.amenities.filter((amenity) => amenity !== ""),
+          availableDates: tour.availableDates,
+          price: tour.price,
+          latitude: tour.latitude,
+          longitude: tour.longitude,
+        };
+
+        const response = await axios.put(
+          `http://localhost:3000/api/tours/${id}`,
+          requestData
+        );
+        console.log("Response:", response.data);
+      } catch (error) {
+        console.log(error.message);
+      }
+      navigate("/product/tours");
+      window.location.reload();
+    } else {
+      setShowModal(false); // Hide the confirmation modal
+    }
+  };
 
   const uploadPhoto = async (files) => {
     const formData = new FormData();
@@ -119,8 +137,8 @@ function TourEditPage() {
       );
       return fileNames;
     } catch (error) {
-      console.error('Error uploading files:', error);
-      throw error; // Re-throw the error so that the calling function can handle it
+      console.error("Error uploading files:", error);
+      throw error;
     }
   };
 
@@ -139,7 +157,7 @@ function TourEditPage() {
       <form onSubmit={handleFormSubmit}>
         <div>
           <div className="mb-1 block">
-            <Label htmlFor="place" value="Place" />
+            <Label htmlFor="place" value="Place*" />
           </div>
           <TextInput
             id="place"
@@ -152,7 +170,7 @@ function TourEditPage() {
         </div>
         <div>
           <div className="mb-1 block">
-            <Label htmlFor="title" value="Title" />
+            <Label htmlFor="title" value="Title*" />
           </div>
           <TextInput
             id="title"
@@ -165,7 +183,7 @@ function TourEditPage() {
         </div>
         <div>
           <div className="mb-1 block">
-            <Label htmlFor="description" value="Description" />
+            <Label htmlFor="description" value="Description*" />
           </div>
           <Textarea
             id="description"
@@ -176,19 +194,7 @@ function TourEditPage() {
             onChange={(e) => setTour({ ...tour, description: e.target.value })}
           />
         </div>
-        <div>
-          <div className="mb-1 block">
-            <Label htmlFor="city" value="City" />
-          </div>
-          <TextInput
-            id="city"
-            type="text"
-            placeholder="City (e.g., Paris)"
-            required
-            value={tour?.city || ""}
-            onChange={(e) => setTour({ ...tour, city: e.target.value })}
-          />
-        </div>
+
         <div>
           <div className="mb-1 block">
             <Label htmlFor="duration" value="Duration" />
@@ -196,11 +202,17 @@ function TourEditPage() {
           <TextInput
             id="duration"
             type="text"
-            placeholder="Type (e.g., 3 Days 4 nights)"
-            required
+            placeholder="Type no of Days"
+            // required
+            disabled
             value={tour?.duration || ""}
-            onChange={(e) => setTour({ ...tour, duration: e.target.value })}
+            onChange={handleDuration}
+            onKeyPress={handleNegativeDuration}
+            // onChange={(e) => setTour({ ...tour, duration: e.target.value })}
           />
+          {durationWarning && (
+            <div className="text-red-500">{durationWarning}</div>
+          )}
         </div>
         <div className="grid grid-cols-3 gap-2 lg:grid-cols-6 md:grid-cols-4 mt-2">
           {tour?.images.length > 0 &&
@@ -242,7 +254,7 @@ function TourEditPage() {
         <div>
           <div>
             <div className="mb-1 block">
-              <Label htmlFor="Amenities" value="Emenities" />
+              <Label htmlFor="Amenities" value="Emenities*" />
             </div>
             <p className="text-gray-500 text-sm">
               Amenities of the Tour [Mountain view 🏔️, Guided hiking tours 🥾,
@@ -264,15 +276,19 @@ function TourEditPage() {
             </p>
             <DateSelector
               selected={tour?.availableDates || []}
+              duration={Number(duration)}
+              edit={true}
+              // onChange={handleAvailibleDates}
               onChange={(seletectedDates) =>
                 setTour({ ...tour, availableDates: seletectedDates })
               }
+              // setTour({ ...tour, duration: e.target.value })
             />
           </div>
           <div className="grid sm:grid-cols-2 gap-2">
             <div>
               <div className="mb-1 block">
-                <Label htmlFor="price" value="Price" />
+                <Label htmlFor="price" value="Price*" />
               </div>
 
               <TextInput
@@ -286,7 +302,7 @@ function TourEditPage() {
             </div>
             <div>
               <div className="mb-1 block">
-                <Label htmlFor="maxGuestsAllowed" value="Persons Allowed" />
+                <Label htmlFor="maxGuestsAllowed" value="Persons Allowed*" />
               </div>
 
               <TextInput
@@ -301,44 +317,19 @@ function TourEditPage() {
               />
             </div>
           </div>
-          <div className="grid sm:grid-cols-2 gap-2">
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="longitude" value="Longitude" />
-              </div>
-
-              <TextInput
-                id="longitude"
-                type="text"
-                placeholder="Type (e.g. 31.5204° N)"
-                required
-                value={tour?.longitude || ""}
-                onChange={(e) =>
-                  setTour({ ...tour, longitude: e.target.value })
-                }
-              />
-            </div>
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="latitude" value="Latitude" />
-              </div>
-
-              <TextInput
-                id="latitude"
-                type="text"
-                placeholder="Type (e.g. 74.3587° E)"
-                required
-                value={tour?.latitude || ""}
-                onChange={(e) => setTour({ ...tour, latitude: e.target.value })}
-              />
-            </div>
-          </div>
+          <div className="grid sm:grid-cols-2 gap-2"></div>
 
           <Button type="submit" className="mt-5">
             Submit
           </Button>
         </div>
       </form>
+      {showModal && (
+        <ConfirmationModal
+          Modaltext="Are you sure you want to submit the form?"
+          handleConfirmation={handleConfirmation}
+        />
+      )}
     </div>
   );
 }

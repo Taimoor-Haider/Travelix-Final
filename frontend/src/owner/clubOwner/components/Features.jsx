@@ -20,9 +20,6 @@ function Features({ selected = [], onChange }) {
     onChange(newFeatures);
   };
 
-  const showFeatures = () => {
-    console.log(selected);
-  };
 
   return (
     <div>
@@ -79,7 +76,7 @@ function Features({ selected = [], onChange }) {
         </svg>
         Add Feature
       </button>
-      <button
+      {/* <button
         className="w-auto flex gap-1 py-2 px-4 bg-primary hover:bg-teal-500 my-4"
         onClick={showFeatures}
         type="button"
@@ -99,7 +96,7 @@ function Features({ selected = [], onChange }) {
           />
         </svg>
         Show
-      </button>
+      </button> */}
     </div>
   );
 }

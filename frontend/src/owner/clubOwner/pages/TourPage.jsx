@@ -15,6 +15,8 @@ import {
 } from "../../../features/tourOwner/tourListSlice";
 import { tourListSelector } from "../../../features/tourOwner/tourListSlice";
 import DateSelector from "../components/DateSelector";
+import ConfirmationModal from "../../../components/ConfirmationModal";
+
 function TourPage() {
   const { action } = useParams();
   const { userInfo } = useSelector(loginSelector);
@@ -32,8 +34,9 @@ function TourPage() {
   const [personsAllowed, setPersonsAllowed] = useState(1);
   const [amenities, setAmenities] = useState([""]);
   const [availableDates, setAvailableDates] = useState([]);
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState(1);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [durationWarning, setDurationWarning] = useState("");
 
   const handleEmenitiesChange = (emenities) => {
     setAmenities(emenities);
@@ -52,7 +55,11 @@ function TourPage() {
     try {
       if (selectedFiles.length === 0) {
         alert("Please select at least one image!");
-      } else {
+      }
+      else if (availableDates.length === 0) {
+        alert("Add the Date!");
+      } 
+      else {
         const uploadedFileNames = await uploadPhoto(selectedFiles);
         const requestData = {
           place: place,
@@ -79,7 +86,7 @@ function TourPage() {
         setPersonsAllowed(1);
         setAmenities([""]);
         setAvailableDates([]);
-        setPrice(0);
+        setPrice(1);
         setSelectedFiles([]);
         navigate("/product/tours");
         window.location.reload();
@@ -115,7 +122,7 @@ function TourPage() {
   const handlePriceChange = (e) => {
     const inputValue = e.target.value;
     // Check if the input value is not empty and is not a negative number
-    if (inputValue === "" || parseFloat(inputValue) >= 0) {
+    if (inputValue === "" || parseFloat(inputValue) >= 1) {
       // Update the price state only if it's either empty or a non-negative number
       setPrice(inputValue);
     }
@@ -123,11 +130,28 @@ function TourPage() {
   const handlePersonsAllowedChange = (e) => {
     const inputValue = e.target.value;
     // Check if the input value is not empty and is not a negative number
-    if (inputValue === "" || parseInt(inputValue) >= 0) {
+    if (inputValue === "" || parseInt(inputValue) >= 1) {
       // Update the personsAllowed state only if it's either empty or a non-negative number
       setPersonsAllowed(inputValue);
     }
   };
+
+  const handleDuration = (e) => {
+    if (!isNaN(Number(e.target.value))) {
+      setDuration(e.target.value);
+      setDurationWarning("");
+    } else {
+      setDurationWarning("Duration must be a positive number");
+    }
+  };
+
+  const handleNegativeDuration = (e) => {
+    if (e.key === "-" || e.key === "-" || isNaN(Number(e.target.value))) {
+      e.preventDefault();
+      setDurationWarning("Duration must be a positive number");
+    }
+  };
+
   useEffect(() => {
     dispatch(fetchTourList(userInfo?._id));
   }, [dispatch, userInfo]);
@@ -241,7 +265,7 @@ function TourPage() {
           <form onSubmit={handleSubmit}>
             <div>
               <div className="mb-1 block">
-                <Label htmlFor="place" value="Place" />
+                <Label htmlFor="place" value="Place*" />
               </div>
               <TextInput
                 id="place"
@@ -254,7 +278,7 @@ function TourPage() {
             </div>
             <div>
               <div className="mb-1 block">
-                <Label htmlFor="title" value="Title" />
+                <Label htmlFor="title" value="Title*" />
               </div>
               <TextInput
                 id="title"
@@ -267,7 +291,7 @@ function TourPage() {
             </div>
             <div>
               <div className="mb-1 block">
-                <Label htmlFor="description" value="Description" />
+                <Label htmlFor="description" value="Description*" />
               </div>
               <Textarea
                 id="description"
@@ -281,16 +305,21 @@ function TourPage() {
 
             <div>
               <div className="mb-1 block">
-                <Label htmlFor="duration" value="Duration" />
+                <Label htmlFor="duration" value="Duration (No of Days only)*" />
               </div>
               <TextInput
                 id="duration"
                 type="text"
-                placeholder="Type (e.g., 3 Days 4 nights)"
+                placeholder="Type days only (4, 5, 10 ...)"
                 required
                 value={duration}
-                onChange={(e) => setDuration(e.target.value)}
+                onChange={handleDuration}
+                onKeyPress={handleNegativeDuration}
+                // onChange={(e) => setDuration(e.target.value)}
               />
+              {durationWarning && (
+                <div className="text-red-500">{durationWarning}</div>
+              )}
             </div>
             <div className="grid grid-cols-3 gap-2 lg:grid-cols-6 md:grid-cols-4 mt-2">
               {addedPhotos.length > 0 &&
@@ -332,7 +361,7 @@ function TourPage() {
             <div>
               <div>
                 <div className="mb-1 block">
-                  <Label htmlFor="Amenities" value="Emenities" />
+                  <Label htmlFor="Amenities" value="Emenities*" />
                 </div>
                 <p className="text-gray-500 text-sm">
                   Amenities of the Tour [Mountain view 🏔️, Guided hiking tours
@@ -354,12 +383,14 @@ function TourPage() {
                 <DateSelector
                   selected={availableDates}
                   onChange={handleAvailibleDates}
+                  duration={Number(duration)} // Pass the duration prop here
                 />
               </div>
+
               <div className="grid sm:grid-cols-2 gap-2">
                 <div>
                   <div className="mb-1 block">
-                    <Label htmlFor="price" value="Price" />
+                    <Label htmlFor="price" value="Price*" />
                   </div>
 
                   <TextInput

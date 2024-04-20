@@ -10,6 +10,9 @@ import {
   FaBars,
   FaSignOutAlt,
   FaSmile,
+  FaUser,
+  // FaCreditCardAlt
+  FaCreditCard,
 } from "react-icons/fa";
 import "./Sidebar.css"; // Assuming you have a corresponding CSS file for styling
 import { Link } from "react-router-dom";
@@ -17,6 +20,10 @@ import { useSelector } from "react-redux";
 import { loginSelector } from "../../../../features/auth/loginSlice";
 import { useDispatch } from "react-redux";
 import { becomeUser } from "../../../../features/tourOwner/tourListSlice";
+// import { useDispatch } from "react-redux";
+import { logoutUser } from "../../../../features/auth/loginSlice";
+import { useNavigate } from "react-router-dom";
+
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -24,12 +31,22 @@ const Sidebar = () => {
   const { userInfo } = useSelector(loginSelector);
   const toggleSidebar = () => setCollapsed(!collapsed);
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const menuItem = [
-    { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
-    { name: "Bookings", icon: <FaCalendarAlt />, path: "/bookings" },
-    { name: "Tours", icon: <FaCar />, path: "/product" },
-    { name: "Vehicles & Hotels", icon: <FaSmile />, path: "" },
+    // { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
+    // { name: "Bookings", icon: <FaCalendarAlt />, path: "/bookings" },
+    { name: "Tours", icon: <FaCar />, path: "/product/tours" },
+    { name: "Bookings", icon: <FaCreditCard />, path: "/product/bookings" },
+    // { name: "Profile", icon: <FaSmile />, path: "" },
+    { name: "Profile", icon: <FaUser />, path: "/product" },
+    { name: "As a Customer", icon: <FaSmile />, path: "" },
   ];
+  const handleLogout =  () => {
+    console.log("Clicked");
+     dispatch(logoutUser());
+     navigate("/login");
+    window.location.reload();
+  };
   const userProfile = {
     name: "Admin Name",
     imageUrl: `http://localhost:3000/${userInfo?.image}`, // Placeholder image, replace with actual profile image URL
@@ -74,11 +91,10 @@ const Sidebar = () => {
           </li>
         ))}
       </ul>
-
       <div className={`sidebar-footer ${collapsed ? "collapsed" : ""}`}>
         <Link className={`${collapsed ? "footer-collapsed" : ""}`}>
           <FaSignOutAlt />
-          {!collapsed && <span>Logout</span>}
+          {!collapsed && <span onClick={handleLogout}>Logout</span>}
         </Link>
       </div>
     </div>
