@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Rating from "./Rating";
 
 function CardComponentTour({ tour }) {
-  const { images, title, noOfReviews, place, price } = tour;
+  const { images, title, rating, place, price } = tour;
   const navigate = useNavigate();
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -85,7 +85,7 @@ function CardComponentTour({ tour }) {
         <div className="title">
           {title}
           <span className="reviews">
-            {noOfReviews}
+            {rating}
             {starSvg}
           </span>
         </div>

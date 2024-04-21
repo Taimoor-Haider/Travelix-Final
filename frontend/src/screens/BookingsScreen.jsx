@@ -8,6 +8,7 @@ import {
   fetchUserBookings,
   userBookingsSelector,
 } from "../features/tour/userBookingsSlice";
+import "./BookingsScreen.css";
 
 function BookingsScreen() {
   const { userInfo } = useSelector(loginSelector);
@@ -43,83 +44,63 @@ function BookingsScreen() {
       ) : error ? (
         <Message>{error}</Message>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="jb-bookings-main-container">
           {userBookings ? (
             userBookings.map((booking) => (
-              <div
-                key={booking._id}
-                className="bg-white shadow-md rounded-lg p-6"
-              >
-                <h2 className="text-xl font-bold mb-4">Booked Item</h2>
-                <div>
-                  {booking.bookedItem.tourDate?.startDate && (
-                    <p className="text-gray-600 mb-2">
-                      Tour Start Date:{" "}
-                      {new Date(
-                        booking.bookedItem.tourDate?.startDate
-                      ).toLocaleDateString()}
-                    </p>
-                  )}
-                  {booking.bookedItem.tourDate?.finishDate && (
-                    <p className="text-gray-600 mb-2">
-                      Tour End Date:{" "}
-                      {new Date(
-                        booking.bookedItem.tourDate?.finishDate
-                      ).toLocaleDateString()}
-                    </p>
-                  )}
+              <div key={booking._id} className="jb-booking-card">
+                <h2 className="text-xl font-bold mb-4">
+                  Booked a
+                  {booking?.bookedItem?.item?.hotelOwner
+                    ? " Hotel"
+                    : booking?.bookedItem?.item?.vehicleOwner
+                    ? " Vehicle"
+                    : " Tour"}
+                </h2>
 
-                  {booking.bookedItem.bookingDate?.startDate && (
-                    <p className="text-gray-600 mb-2">
-                      Booking Start Date:{" "}
-                      {new Date(
-                        booking.bookedItem.bookingDate?.startDate
-                      ).toLocaleDateString()}
+                <div className="jb-booking-card-main">
+                  <div className="jb-image-container">
+                    {booking?.bookedItem?.item?.images &&
+                      booking?.bookedItem?.item?.images[0] && (
+                        <img
+                          src={booking.bookedItem.item.images[0]}
+                          className="image"
+                        />
+                      )}
+                  </div>
+                  <div className="jb-booking-details">
+                    <p>
+                      <strong className="jb-strong"> Title : </strong>
+                      {booking?.bookedItem?.item?.title ||
+                        booking?.bookedItem?.item?.hotelName ||
+                        booking?.bookedItem?.item?.vehicleModel}
                     </p>
-                  )}
-                  {booking.bookedItem.bookingDate?.finishDate && (
-                    <p className="text-gray-600 mb-2">
-                      Booking End Date:{" "}
-                      {new Date(
-                        booking.bookedItem.bookingDate?.finishDate
-                      ).toLocaleDateString()}
+                    <p>
+                      <strong className="jb-strong">Price: </strong>
+                      {booking.bookedItem.price} PKR
                     </p>
-                  )}
-                  {booking.bookedItem?.numberOfPersons && (
-                    <p className="text-gray-600 mb-2">
-                      Number of Persons: {booking.bookedItem?.numberOfPersons}
+         
+
+                    <p>
+                      <strong className="jb-strong">Location : </strong>
+                      {booking?.bookedItem?.item?.location ||
+                        booking?.bookedItem?.item?.place}
                     </p>
-                  )}
-                  <p className="text-gray-600 mb-2">
-                    Price: {booking.bookedItem.price} PKR
-                  </p>
+                               
+                    <strong className="jb-strong">Booked At: </strong>
+                    {booking?.bookingAt && (
+                      <span style={{ color: "#000" }}>
+                        {new Date(booking.bookingAt).toLocaleDateString()}
+                      </span>
+                    )}
+                    <p>
+                      <strong className="jb-strong">Description : </strong>{" "}
+                      {booking?.bookedItem?.item?.description}
+                    </p>
+
+                   
+                  </div>
                 </div>
-                <hr className="my-4" />
-                <h2 className="text-xl font-bold mb-4">Booked User Info</h2>
-                <div>
-                  <p className="text-gray-600 mb-2">
-                    Full Name: {booking.bookedUserInfo.fullName}
-                  </p>
-                  <p className="text-gray-600 mb-2">
-                    CNIC: {booking.bookedUserInfo.cnic}
-                  </p>
-                  <p className="text-gray-600 mb-2">
-                    Gender: {booking.bookedUserInfo.gender}
-                  </p>
-                </div>
-                <hr className="my-4" />
-                <h2 className="text-xl font-bold mb-4">User Info</h2>
-                <div>
-                  <p className="text-gray-600 mb-2">
-                    Name: {booking.user.name}
-                  </p>
-                  <p className="text-gray-600 mb-2">
-                    Email: {booking.user.email}
-                  </p>
-                  <p className="text-gray-600 mb-2">
-                    Phone: {booking.user.phone}
-                  </p>
-                </div>
+
                 {console.log(
                   "Tour Date" + booking.bookedItem.tourDate?.finishDate
                 )}

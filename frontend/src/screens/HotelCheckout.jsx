@@ -88,7 +88,7 @@ function HotelCheckout() {
         <div className="w-[50%] mx-auto">{View}</div>
       </div>
       <div className="flex justify-center items-center">
-        <PaymentModel handleBooking={handleBooking} btnText="Book Car" />
+        <PaymentModel handleBooking={handleBooking} btnText="Book Hotel" />
         {/* <Button type="submit" onClick={handleBooking}>
           Book
         </Button> */}

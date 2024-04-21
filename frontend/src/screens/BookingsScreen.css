@@ -1,0 +1,44 @@
+.jb-bookings-main-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  font-size: 1.2rem;
+}
+
+.jb-booking-card {
+  background-color: rgb(225, 225, 225);;
+  height: auto;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.jb-booking-card-main {
+  display: flex;
+  /* gap: 2rem; */
+
+}
+.jb-strong{
+    font-size: 1.1rem;
+}
+.jb-image-container {
+  flex: 1;
+  /* background-color: red; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.jb-image-container img{
+    max-width:100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.jb-booking-details {
+  flex: 2;
+  background-color: rgb(225, 225, 225);
+  margin-left: 2rem;
+  /* border-radius: 5rem; */
+
+}
+

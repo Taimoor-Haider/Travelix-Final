@@ -21,8 +21,9 @@ function ProfilePage() {
     <div className="profile-container">
       <div id="profile-left-container">
         <div id="profile-picture">
+        {console.log("Userinfo:", userInfo)}
           <img
-            src={`https://travelix-backend-v2.vercel.app/${userInfo?.image}`}
+            src={`${userInfo?.image}`}
             alt="User Image"
           />
         </div>

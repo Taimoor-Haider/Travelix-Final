@@ -106,8 +106,11 @@ const Header = () => {
       </div>
 
       <Navbar.Collapse>
-        <Navbar.Link as={NavLink} to={"/tour"} active>
-          Tour
+        <Navbar.Link as={NavLink} to={"/"}>
+          Home
+        </Navbar.Link>
+        <Navbar.Link as={NavLink} to={"/tour"}>
+          Tours
         </Navbar.Link>
         <Navbar.Link as={NavLink} to={"/hotel"}>
           Hotel
@@ -115,9 +118,7 @@ const Header = () => {
         <Navbar.Link as={NavLink} to={"/vehicle"}>
           Car Rental
         </Navbar.Link>
-        <Navbar.Link as={NavLink} to={"/contact"}>
-          Contact
-        </Navbar.Link>
+
       </Navbar.Collapse>
     </Navbar>
   );

@@ -1,0 +1,13 @@
+
+.jc-carousel-container{
+    width: 100%;
+    height: 30rem; /* Set desired height */
+    overflow: hidden;
+    background-color: lightgrey;    
+}
+
+.jc-carousel-container img{
+    width: auto;
+    height: 100%;
+    object-fit: contain;
+}

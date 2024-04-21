@@ -18,38 +18,38 @@ function FooterComponent() {
               href="#"
               src={getLogoURL("travelix.jpeg")}
               alt="Flowbite Logo"
-              name="Travlix"
+              name="Travelix"
             />
           </div>
           <div className="grid grid-cols-2 gap-8 sm:mt-4 sm:grid-cols-3 sm:gap-6">
             <div>
               <Footer.Title title="about" />
               <Footer.LinkGroup col>
-                <Footer.Link href="#">Travlix</Footer.Link>
-                <Footer.Link href="#">Travlix</Footer.Link>
+                <Footer.Link href="#">Travelix</Footer.Link>
+                <Footer.Link href="#">Travelix</Footer.Link>
               </Footer.LinkGroup>
             </div>
             <div>
               <Footer.Title title="Follow us" />
               <Footer.LinkGroup col>
-                <Footer.Link href="#">Github</Footer.Link>
-                <Footer.Link href="#">Discord</Footer.Link>
+                <Footer.Link href="#">Instagram</Footer.Link>
+                <Footer.Link href="#">Facebook</Footer.Link>
               </Footer.LinkGroup>
             </div>
-            <div>
-              <Footer.Title title="Legal" />
-              <Footer.LinkGroup col>
-                <Footer.Link href="#">Privacy Policy</Footer.Link>
-                <Footer.Link href="#">Terms &amp; Conditions</Footer.Link>
-              </Footer.LinkGroup>
-            </div>
+            {/* <div> */}
+              {/* <Footer.Title title="Legal" /> */}
+              {/* <Footer.LinkGroup col> */}
+                {/* <Footer.Link href="#">Privacy Policy</Footer.Link> */}
+                {/* <Footer.Link href="#">Terms &amp; Conditions</Footer.Link> */}
+              {/* </Footer.LinkGroup> */}
+            {/* </div> */}
           </div>
         </div>
         <Footer.Divider />
         <div className="w-full sm:flex sm:items-center sm:justify-between">
           <Footer.Copyright
             href="#"
-            by="Travlix"
+            by="Travelix"
             year={new Date().getFullYear()}
           />
           <div className="mt-4 flex space-x-6 sm:mt-0 sm:justify-center">

@@ -297,7 +297,7 @@ const MainHomeScreen = () => {
         </Link>
         <Link to={"/tour"}>
           <Card
-            title="Travel Clubs"
+            title="Tours"
             desc="Boook Hotels Seamlessly using our platform, Embark on your new Journey"
             svg={travelClubIcon}
           />
@@ -467,7 +467,7 @@ const MainHomeScreen = () => {
                   <div className="details">
                     <div className="imgBx">
                       <img
-                        src={`https://travelix-backend-v2.vercel.app/${review.user.image}`}
+                        src={`${review.user.image}`}
                         alt={review.user.name}
                       />
                     </div>

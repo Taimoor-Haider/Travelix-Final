@@ -7,9 +7,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { addUserInfo } from "../features/auth/loginSlice";
 import { setRegisterUserInfo } from "../features/auth/registerSlice";
 import { useDispatch } from "react-redux";
+
 function RegisterScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -30,10 +30,15 @@ function RegisterScreen() {
   const navigate = useNavigate();
   const { View } = useLottie(options);
   const dispatch = useDispatch();
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
-    console.log("Form Submitted");
+    if (password !== confirmPassword) {
+      setError("Confirm password must match the password");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     const lowercaseEmail = email.toLowerCase();
@@ -133,7 +138,7 @@ function RegisterScreen() {
                 placeholder="John Doe"
                 required
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setName(e.target.value.trimStart())}
               />
             </div>
             <div>

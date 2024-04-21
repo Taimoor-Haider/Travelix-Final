@@ -174,7 +174,7 @@ function TravelPage() {
 
       <section>
         <div className="heading-Ucontainer" id="trending-travel-heading">
-          <h1 className="section-heading">Travel Clubs</h1>
+          <h1 className="section-heading">Tours</h1>
           <img src={BlueUnderline} />
         </div>
 
