@@ -47,7 +47,7 @@ function VehicleCard({ vehicle }) {
       <div className="img-btns-container">
         <div className="image-container">
           <img
-            src={`http://localhost:3000/${images[currentImageIndex]}`}
+            src={images[currentImageIndex]}
             alt={`Image ${currentImageIndex + 1}`}
           />
         </div>

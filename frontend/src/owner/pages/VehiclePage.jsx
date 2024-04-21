@@ -114,7 +114,7 @@ function VehiclePage() {
           };
 
           const response = await axois.post(
-            "http://localhost:3000/api/vehicle",
+            "https://travelix-backend-v2.vercel.app/api/vehicle",
             requestData
           );
           console.log("Response:", response.data);
@@ -150,7 +150,7 @@ function VehiclePage() {
       formData.append("photos", files[i]);
     }
     const { data: fileNames } = await axois.post(
-      "http://localhost:3000/upload",
+      "https://travelix-backend-v2.vercel.app/upload",
       formData,
       {
         headers: {
@@ -224,7 +224,7 @@ function VehiclePage() {
                 >
                   <div className="listing-img">
                     <img
-                      src={`http://localhost:3000/${vehicle.images[0]}`}
+                      src={`https://travelix-backend-v2.vercel.app/${vehicle.images[0]}`}
                       alt="Vehicle"
                     />
                   </div>
@@ -358,7 +358,7 @@ function VehiclePage() {
                     <div className="h-32 flex">
                       <img
                         className="rounded-2xl w-full object-cover"
-                        src={`http://localhost:3000/${link}`}
+                        src={`https://travelix-backend-v2.vercel.app/${link}`}
                         alt="link"
                         key={link}
                       />

@@ -24,14 +24,13 @@ import { becomeUser } from "../../../../features/tourOwner/tourListSlice";
 import { logoutUser } from "../../../../features/auth/loginSlice";
 import { useNavigate } from "react-router-dom";
 
-
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   const { userInfo } = useSelector(loginSelector);
   const toggleSidebar = () => setCollapsed(!collapsed);
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const menuItem = [
     // { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
     // { name: "Bookings", icon: <FaCalendarAlt />, path: "/bookings" },
@@ -41,15 +40,15 @@ const Sidebar = () => {
     { name: "Profile", icon: <FaUser />, path: "/product" },
     { name: "As a Customer", icon: <FaSmile />, path: "" },
   ];
-  const handleLogout =  () => {
+  const handleLogout = () => {
     console.log("Clicked");
-     dispatch(logoutUser());
-     navigate("/login");
+    dispatch(logoutUser());
+    navigate("/login");
     window.location.reload();
   };
   const userProfile = {
     name: "Admin Name",
-    imageUrl: `http://localhost:3000/${userInfo?.image}`, // Placeholder image, replace with actual profile image URL
+    imageUrl: `${userInfo?.image}`, // Placeholder image, replace with actual profile image URL
   };
 
   const handleTourVehicle = (path) => {
@@ -97,7 +96,6 @@ const Sidebar = () => {
           {!collapsed && <span onClick={handleLogout}>Logout</span>}
         </Link>
       </div>
-      
     </div>
   );
 };

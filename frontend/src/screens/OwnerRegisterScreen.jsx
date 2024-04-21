@@ -31,15 +31,18 @@ function OwnerRegisterScreen() {
 
   const validationSchema = Yup.object().shape({
     name: Yup.string()
+      .trim() // Trim whitespace
       .min(3, "Full name must be at least 3 characters")
       .required("Name is required"),
     email: Yup.string()
+      .trim() // Trim whitespace
       .matches(
         /^[a-zA-Z0-9.]+@[a-zA-Z]+\.[a-zA-Z]{2,}$/,
         "Invalid email format"
       )
       .required("Email is required"),
     phone: Yup.string()
+      .trim() // Trim whitespace
       .matches(
         /^[0-9]{11}$/,
         "Number must be 11 digits and contain only numbers"
@@ -48,20 +51,25 @@ function OwnerRegisterScreen() {
     password: Yup.string()
       .min(8, "Password must be at least 8 characters")
       .required("Password is required"),
-    address: Yup.string().required("Address is required"),
+    address: Yup.string()
+      .trim() // Trim whitespace
+      .required("Address is required"),
     accountNumber: Yup.string()
+      .trim() // Trim whitespace
       .matches(
         /^[0-9]{13}$/,
         "Account number must be 13 digits and contain only numbers"
       )
       .required("Account number is required"),
     accountName: Yup.string()
+      .trim() // Trim whitespace
       .matches(
         /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9]{3,}$/,
         "Account number must contain at least 3 alphanumeric characters"
       )
       .required("Account number is required"),
     bankName: Yup.string()
+      .trim() // Trim whitespace
       .matches(/^\D+$/, "Account name must not contain digits")
       .required("Account name is required"),
   });

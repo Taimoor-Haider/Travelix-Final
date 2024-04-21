@@ -7,11 +7,7 @@ function CardCarousel({ images, flag }) {
       {images.map((image, index) => (
         <div key={index} className="carousel-item w-full">
           <img
-            src={
-              flag === true
-                ? `${image}`
-                : getImageURL(image)
-            }
+            src={image}
             className="w-full"
             alt={index}
             style={{

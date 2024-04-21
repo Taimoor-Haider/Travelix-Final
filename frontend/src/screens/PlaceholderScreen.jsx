@@ -108,9 +108,7 @@ function PlaceholderScreen() {
           <div className="flex items-start gap-5 w-full mt-5">
             <div className="avatar">
               <div className="w-32 rounded">
-                <img
-                  src={`http://localhost:3000/${bookingPackage?.images[0]}`}
-                />
+                <img src={bookingPackage?.images[0]} />
               </div>
             </div>
             <div className="flex items-center justify-between w-full">

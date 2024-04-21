@@ -23,7 +23,6 @@ function CardComponentTour({ tour }) {
     );
   };
 
-
   const handleDotClick = (index) => {
     setCurrentImageIndex(index);
   };
@@ -51,7 +50,7 @@ function CardComponentTour({ tour }) {
       <div className="img-btns-container">
         <div className="image-container">
           <img
-            src={`http://localhost:3000/${images[currentImageIndex]}`}
+            src={images[currentImageIndex]}
             alt={`Image ${currentImageIndex + 1}`}
           />
         </div>
@@ -91,7 +90,6 @@ function CardComponentTour({ tour }) {
           </span>
         </div>
         <div> {place}</div>
-
 
         <h4 className="price"> {price} PKR </h4>
         <div>

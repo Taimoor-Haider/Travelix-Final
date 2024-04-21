@@ -46,7 +46,7 @@ export default loginSlice.reducer;
 export const loginUser = (email, password) => async (dispatch, getState) => {
   try {
     dispatch(setLoading(true));
-    const { data } = await axios.post(`http://localhost:3000/api/auth/login`, {
+    const { data } = await axios.post(`https://travelix-backend-v2.vercel.app/api/auth/login`, {
       email,
       password,
     });

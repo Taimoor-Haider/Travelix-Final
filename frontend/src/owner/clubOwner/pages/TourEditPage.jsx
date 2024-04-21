@@ -31,7 +31,7 @@ function TourEditPage() {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          `http://localhost:3000/api/tours/${id}`
+          `https://travelix-backend-v2.vercel.app/api/tours/${id}`
         );
         setTour(data);
       } catch (error) {
@@ -123,7 +123,7 @@ function TourEditPage() {
         };
 
         const response = await axios.put(
-          `http://localhost:3000/api/tours/${id}`,
+          `https://travelix-backend-v2.vercel.app/api/tours/${id}`,
           requestData
         );
         setEditLoading(false);
@@ -146,7 +146,7 @@ function TourEditPage() {
 
     try {
       const { data: fileNames } = await axios.post(
-        "http://localhost:3000/upload",
+        "https://travelix-backend-v2.vercel.app/upload",
         formData,
         {
           headers: {
@@ -238,7 +238,7 @@ function TourEditPage() {
               <div className="h-32 flex">
                 <img
                   className="rounded-2xl w-full object-cover"
-                  src={`http://localhost:3000/${link}`}
+                  src={`${link}`}
                   alt="link"
                   key={link}
                 />
@@ -343,7 +343,6 @@ function TourEditPage() {
           </Button>
         </div>
       </form>
-      )}
       {showModal && (
         <ConfirmationModal
           Modaltext="Are you sure you want to submit the form?"

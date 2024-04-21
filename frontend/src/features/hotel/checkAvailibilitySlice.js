@@ -67,7 +67,7 @@ export const checkHotelAvailability =
       console.log("ID" + hotelId);
 
       const response = await axios.post(
-        "http://localhost:3000/api/hotel/booking/check-availability",
+        "https://travelix-backend-v2.vercel.app/api/hotel/booking/check-availability",
         {
           startDate: startDate,
           finishDate: finishDate,

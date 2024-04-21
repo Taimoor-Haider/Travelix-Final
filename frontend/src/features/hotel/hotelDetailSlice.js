@@ -63,7 +63,9 @@ export default hotelDetailSlice.reducer;
 export const fetchHotel = (id) => async (dispatch, getState) => {
   try {
     dispatch(setLoading());
-    const { data } = await axios.get(`http://localhost:3000/api/hotels/${id}`);
+    const { data } = await axios.get(
+      `https://travelix-backend-v2.vercel.app/api/hotels/${id}`
+    );
     dispatch(setHotel(data));
     localStorage.setItem("hotel", JSON.stringify(getState().hotelDetail.hotel));
   } catch (error) {
@@ -108,7 +110,7 @@ export const createHotelBooking =
       };
 
       const response = await axios.post(
-        `http://localhost:3000/api/hotel/booking`,
+        `https://travelix-backend-v2.vercel.app/api/hotel/booking`,
         booking,
         config
       );

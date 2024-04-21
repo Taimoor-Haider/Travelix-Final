@@ -74,7 +74,7 @@ function StripeForm({ handleBooking }) {
 
   return (
     <form className="flex max-full flex-col gap-4" onSubmit={handlePayment}>
-      {loading || (payLoading && <Loader />)}
+      {loading && <Loader />}
       {error && <Message>{error}</Message>}
       {payError && <Message>{payError}</Message>}
       <div>
@@ -95,7 +95,9 @@ function StripeForm({ handleBooking }) {
         </div>
         <CardExpiryElement className="form-control border p-2 rounded-[0.2rem]" />
       </div>
-      <Button type="submit">Pay</Button>
+      <Button type="submit" disabled={loading}>
+        Pay
+      </Button>
     </form>
   );
 }

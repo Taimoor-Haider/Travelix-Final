@@ -92,7 +92,9 @@ export const fetchTour =
   (id, dateIndex, persons) => async (dispatch, getState) => {
     try {
       dispatch(setLoading());
-      const { data } = await axios.get(`http://localhost:3000/api/tours/${id}`);
+      const { data } = await axios.get(
+        `https://travelix-backend-v2.vercel.app/api/tours/${id}`
+      );
       if (data.personsAllowed < persons) {
         throw new Error("Seats not availible");
       }
@@ -171,7 +173,7 @@ export const createBooking =
       };
 
       const response = await axios.post(
-        `http://localhost:3000/api/bookings/`,
+        `https://travelix-backend-v2.vercel.app/api/bookings/`,
         booking,
         config
       );
@@ -198,7 +200,7 @@ export const getBookingDetails = (id) => async (dispatch) => {
   try {
     dispatch(setLoading());
     const { data } = await axios.get(
-      `http://localhost:3000/api/bookings/${id}`
+      `https://travelix-backend-v2.vercel.app/api/bookings/${id}`
     );
     dispatch(setBooking(data));
   } catch (error) {

@@ -58,7 +58,7 @@ export const fetchVehicleList = (ownerId) => async (dispatch) => {
   try {
     dispatch(setLoading());
     const { data } = await axios.get(
-      `http://localhost:3000/api/vehicle/user/${ownerId}`
+      `https://travelix-backend-v2.vercel.app/api/vehicle/user/${ownerId}`
     );
     console.log(data);
     dispatch(setVehicles(data));
@@ -74,7 +74,9 @@ export const fetchVehicleList = (ownerId) => async (dispatch) => {
 export const fetchVehicle = (id) => async (dispatch) => {
   try {
     dispatch(setLoading());
-    const { data } = await axios.get(`http://localhost:3000/api/vehicle/${id}`);
+    const { data } = await axios.get(
+      `https://travelix-backend-v2.vercel.app/api/vehicle/${id}`
+    );
     dispatch(setVehicle(data));
   } catch (error) {
     const errorMessage =
@@ -87,7 +89,9 @@ export const fetchVehicle = (id) => async (dispatch) => {
 export const deleteVehicleById = (id) => async (dispatch, getState) => {
   try {
     const { _id } = getState().login.userInfo;
-    await axios.delete(`http://localhost:3000/api/vehicle/${id}`);
+    await axios.delete(
+      `https://travelix-backend-v2.vercel.app/api/vehicle/${id}`
+    );
     dispatch(fetchVehicleList(_id));
   } catch (error) {
     const errorMessage =
@@ -102,7 +106,7 @@ export const fetchBookingsOfOwner = (ownerId) => async (dispatch) => {
   try {
     dispatch(setLoading());
     const { data } = await axios.get(
-      `http://localhost:3000/api/vehicle/booking/owner/${ownerId}`
+      `https://travelix-backend-v2.vercel.app/api/vehicle/booking/owner/${ownerId}`
     );
     dispatch(setOwnerBookings(data));
   } catch (error) {

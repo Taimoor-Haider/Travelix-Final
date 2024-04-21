@@ -10,7 +10,7 @@ function Slider({ images }) {
       {images.map((image, index) => (
         <div className="carousel-item" key={index}>
           <img
-            src={`http://localhost:3000/${image}`}
+            src={image}
             alt={`image-${index}`}
             className="aspect-square object-cover"
           />

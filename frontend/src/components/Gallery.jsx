@@ -21,7 +21,7 @@ function Gallery({ tourPackage }) {
                 {tourPackage.images.map((image, i) => (
                   <img
                     key={i}
-                    src={`http://localhost:3000/${image}`}
+                    src={image}
                     style={{
                       width: "100%",
                       display: "block",

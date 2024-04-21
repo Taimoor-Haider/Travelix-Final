@@ -157,14 +157,12 @@ router.post("/resetUserInfo", async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-
     if (name) user.name = name;
     if (password) user.password = password;
     if (file) {
       const imageUrl = await uploadToFirebase(file);
       user.image = imageUrl;
     }
-
     await user.save();
     res.status(200).send(user);
   } catch (error) {

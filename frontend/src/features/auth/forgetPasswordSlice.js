@@ -55,7 +55,7 @@ export const forgetPassword = (email) => async (dispatch, getState) => {
     dispatch(setEmail(email));
 
     const response = await axios.post(
-      "http://localhost:3000/api/auth/forget-password",
+      "https://travelix-backend-v2.vercel.app/api/auth/forget-password",
       {
         email: email,
       }

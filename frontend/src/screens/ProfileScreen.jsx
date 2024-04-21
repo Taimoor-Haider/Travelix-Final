@@ -6,25 +6,19 @@ import { resetUser } from "../features/auth/resetUserSlice";
 function ProfileScreen() {
   const { userInfo } = useSelector(loginSelector);
   const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
   const [image, setImage] = useState(null);
   const dispatch = useDispatch();
-
   const handleChangeInfo = () => {
     console.log("Name:", name);
-    console.log("Password:", password);
     console.log("Image:", image);
-    dispatch(resetUser(name, password, image));
+    dispatch(resetUser(name, password));
   };
 
   return (
     <div className="profile-container">
       <div id="profile-left-container">
         <div id="profile-picture">
-          <img
-            src={`http://localhost:3000/${userInfo?.image}`}
-            alt="User Image"
-          />
+          <img src={userInfo?.image} alt="User Image" />
         </div>
         <h1>{userInfo?.name}</h1>
         <p>{userInfo?.email}</p>
@@ -41,16 +35,6 @@ function ProfileScreen() {
             placeholder="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-          />
-
-          <label>Password</label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            placeholder="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
           />
 
           <label>Profile Picture</label>

@@ -6,6 +6,7 @@ const initialState = {
   loading: false,
   feedback: null,
   error: null,
+  feebackUpdateSuccess: false,
 };
 
 // Create slice
@@ -28,11 +29,15 @@ const feedbackSlice = createSlice({
       state.feedback = null;
       state.error = payload;
     },
+    setFeebackUpdateSuccess: (state) => {
+      state.feebackUpdateSuccess = true;
+    },
   },
 });
 
 // Export actions and reducer
-export const { setLoading, setFeedback, setError } = feedbackSlice.actions;
+export const { setLoading, setFeedback, setError, setFeebackUpdateSuccess } =
+  feedbackSlice.actions;
 export const feedbackSelector = (state) => state.feedback;
 export default feedbackSlice.reducer;
 
@@ -42,7 +47,7 @@ export const sendFeedback =
     try {
       dispatch(setLoading());
       const { _id, token } = getState().login.userInfo;
-      console.log("http://localhost:3000/api/reviews");
+      console.log("https://travelix-backend-v2.vercel.app/api/reviews");
       console.log(token);
       const config = {
         headers: {
@@ -51,7 +56,7 @@ export const sendFeedback =
         },
       };
       const { data } = await axios.post(
-        "http://localhost:3000/api/reviews",
+        "https://travelix-backend-v2.vercel.app/api/reviews",
         {
           user: _id,
           targetId: targetId,
@@ -71,3 +76,20 @@ export const sendFeedback =
       dispatch(setError(errorMessage));
     }
   };
+
+export const updateBookingFeedback = (productId) => async (dispatch) => {
+  try {
+    dispatch(setLoading());
+    console.log();
+    const { data } = await axios.put(
+      `https://travelix-backend-v2.vercel.app/api/bookings/updateFeedback/${productId}`
+    );
+    dispatch(setFeebackUpdateSuccess());
+  } catch (error) {
+    const errorMessage =
+      error.response && error.response.data
+        ? error.response.data
+        : error.message;
+    dispatch(setError(errorMessage));
+  }
+};

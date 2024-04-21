@@ -43,7 +43,9 @@ export default userBookingsSlice.reducer;
 export const fetchUserBookings = (userId) => async (dispatch, getState) => {
   try {
     dispatch(setLoading());
-    console.log(`http://localhost:3000/api/bookings/user/${userId}`);
+    console.log(
+      `https://travelix-backend-v2.vercel.app/api/bookings/user/${userId}`
+    );
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -51,7 +53,7 @@ export const fetchUserBookings = (userId) => async (dispatch, getState) => {
     };
     console.log(config);
     const { data } = await axios.get(
-      `http://localhost:3000/api/bookings/user/${userId}`,
+      `https://travelix-backend-v2.vercel.app/api/bookings/user/${userId}`,
       config
     );
 

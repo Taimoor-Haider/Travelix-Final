@@ -63,7 +63,7 @@ export default vehicleDetailSlice.reducer;
 export const fetchVehicle = (id) => async (dispatch, getState) => {
   try {
     dispatch(setLoading());
-    const { data } = await axios.get(`http://localhost:3000/api/vehicle/${id}`);
+    const { data } = await axios.get(`https://travelix-backend-v2.vercel.app/api/vehicle/${id}`);
     dispatch(setVehicle(data));
     localStorage.setItem(
       "vehicle",
@@ -115,7 +115,7 @@ export const createVehicleBooking =
       };
 
       const response = await axios.post(
-        `http://localhost:3000/api/vehicle/booking`,
+        `https://travelix-backend-v2.vercel.app/api/vehicle/booking`,
         booking,
         config
       );

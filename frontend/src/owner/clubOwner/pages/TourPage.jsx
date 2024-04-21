@@ -101,7 +101,7 @@ function TourPage() {
             price: price,
           };
           const response = await axios.post(
-            "http://localhost:3000/api/tours",
+            "https://travelix-backend-v2.vercel.app/api/tours",
             requestData
           );
 
@@ -119,10 +119,14 @@ function TourPage() {
           setSelectedFiles([]);
         }
       } catch (error) {
-        setSubmittingError(error.response.data);
+        const errorMessage =
+          error.response && error.response.data
+            ? error.response.data
+            : error.message;
+        setSubmittingError(errorMessage);
       }
       navigate("/product/tours");
-      // window.location.reload();
+      window.location.reload();
     } else {
       setShowModal(false); // Hide the confirmation modal
     }
@@ -134,7 +138,7 @@ function TourPage() {
       formData.append("photos", files[i]);
     }
     const { data: fileNames } = await axios.post(
-      "http://localhost:3000/upload",
+      "https://travelix-backend-v2.vercel.app/upload",
       formData,
       {
         headers: {
@@ -234,10 +238,7 @@ function TourPage() {
                   onClick={handleDetails}
                 >
                   <div className="listing-img">
-                    <img
-                      src={`http://localhost:3000/${tour.images[0]}`}
-                      alt="hotel"
-                    />
+                    <img src={`${tour.images[0]}`} alt="hotel" />
                   </div>
                   <div className="listing-details">
                     <h2 className="font-bold capitalize text-2xl mb-[4rem]">
@@ -367,7 +368,7 @@ function TourPage() {
                     <div className="h-32 flex">
                       <img
                         className="rounded-2xl w-full object-cover"
-                        src={`http://localhost:3000/${link}`}
+                        src={`${link}`}
                         alt="link"
                         key={link}
                       />

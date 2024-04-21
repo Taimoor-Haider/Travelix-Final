@@ -22,7 +22,7 @@ const Header = () => {
   const handleAdminPanel = async () => {
     try {
       const { data } = await axios.put(
-        `http://localhost:3000/api/auth/updateRoleForUser`,
+        `https://travelix-backend-v2.vercel.app/api/auth/updateRoleForUser`,
         {
           ownerId: userInfo._id,
         }
@@ -53,11 +53,7 @@ const Header = () => {
             label={
               <Avatar
                 alt="User settings"
-                img={
-                  userInfo?.image
-                    ? `http://localhost:3000/${userInfo?.image}`
-                    : ""
-                }
+                img={userInfo?.image ? userInfo?.image : ""}
                 rounded
                 className="object-cover w-full h-full"
               />

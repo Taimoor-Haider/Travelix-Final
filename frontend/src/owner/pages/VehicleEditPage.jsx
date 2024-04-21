@@ -31,7 +31,7 @@ function VehicleEditPage() {
     const fetchEditVehicle = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:3000/api/vehicle/${id}`
+          `https://travelix-backend-v2.vercel.app/api/vehicle/${id}`
         );
         setVehicle(data);
       } catch (error) {
@@ -110,7 +110,10 @@ function VehicleEditPage() {
           ),
         };
 
-        await axios.put(`http://localhost:3000/api/vehicle/${id}`, requestData);
+        await axios.put(
+          `https://travelix-backend-v2.vercel.app/api/vehicle/${id}`,
+          requestData
+        );
 
         setEditLoading(false);
         navigate("/product/vehicles");
@@ -129,7 +132,7 @@ function VehicleEditPage() {
       formData.append("photos", files[i]);
     }
     const { data: fileNames } = await axios.post(
-      "http://localhost:3000/upload",
+      "https://travelix-backend-v2.vercel.app/upload",
       formData,
       {
         headers: {
@@ -207,7 +210,7 @@ function VehicleEditPage() {
                 <div className="h-32 flex">
                   <img
                     className="rounded-2xl w-full object-cover"
-                    src={`http://localhost:3000/${link}`}
+                    src={`https://travelix-backend-v2.vercel.app/${link}`}
                     alt="link"
                     key={link}
                   />

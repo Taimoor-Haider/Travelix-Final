@@ -58,7 +58,7 @@ export const payBooking =
         },
       };
       const response = await axios.put(
-        `http://localhost:3000/api/bookings/${bookingId}`,
+        `https://travelix-backend-v2.vercel.app/api/bookings/${bookingId}`,
         paymentMethod,
         config
       );

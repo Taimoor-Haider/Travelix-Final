@@ -44,10 +44,7 @@ function ProfilePage() {
     <div className="profile-container">
       <div id="profile-left-container">
         <div id="profile-picture">
-          <img
-            src={`http://localhost:3000/${userInfo?.image}`}
-            alt="User Image"
-          />
+          <img src={`${userInfo?.image}`} alt="User Image" />
         </div>
         <h1>{userInfo?.name}</h1>
         <p>{userInfo?.email}</p>

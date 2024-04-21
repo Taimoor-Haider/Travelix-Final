@@ -26,11 +26,17 @@ function HotelDetailScreen() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // const [isAvailibility, setIsAvailibility] = useState(null);
+  const [showAvailibility, setShowAvailibility] = useState(false);
   const { loading, hotel, error } = useSelector(hotelDetailSelector);
   const { availibleLoading, isAvailible, availibilityError } = useSelector(
     checkAvailibilitySlector
   );
 
+  useEffect(() => {
+    if (isAvailible) {
+      setShowAvailibility(true);
+    }
+  }, [isAvailible]);
   useEffect(() => {
     dispatch(fetchHotel(id));
   }, [id]);
@@ -127,24 +133,27 @@ function HotelDetailScreen() {
                       ""
                     )}
                   </p>
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10 flex justify-between items-center">
-                    <span className="text-2xl font-semibold">Status</span>
-                    <p className="text-2xl font-medium">
-                      {isAvailible ? (
-                        <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
-                          Availible
-                        </span>
-                      ) : (
-                        <span class="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
-                          Unavailable
-                        </span>
-                      )}
-                    </p>
-                  </li>
+                  {showAvailibility && (
+                    <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10 flex justify-between items-center">
+                      <span className="text-2xl font-semibold">Status</span>
+                      <p className="text-2xl font-medium">
+                        {isAvailible ? (
+                          <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+                            Availible
+                          </span>
+                        ) : (
+                          <span class="bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
+                            Unavailable
+                          </span>
+                        )}
+                      </p>
+                    </li>
+                  )}
                   <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10 flex justify-between items-center">
                     <Button
                       className=" bg-[#008395] w-[100%]"
                       onClick={handleBooking}
+                      disabled={!isAvailible}
                     >
                       Book
                     </Button>

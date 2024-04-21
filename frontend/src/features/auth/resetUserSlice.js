@@ -41,50 +41,44 @@ export const resetSelector = (state) => state.reset;
 
 export default resetSlice.reducer;
 
-export const resetUser =
-  (name, password, image) => async (dispatch, getState) => {
-    try {
-      const { _id } = getState().login.userInfo;
-      console.log("Enter method");
-
-      dispatch(setLoading(true));
-      const { data } = await axios.post(
-        `http://localhost:3000/api/auth/resetUserInfo`,
-        {
-          _id,
-          name,
-          password,
-          image,
+export const resetUser = (name, password) => async (dispatch, getState) => {
+  try {
+    const { _id } = getState().login.userInfo;
+    console.log("Enter method");
+    dispatch(setLoading(true));
+    const { data } = await axios.post(
+      `https://travelix-backend-v2.vercel.app/api/auth/resetUserInfo`,
+      {
+        _id,
+        name,
+        password,
+      },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      // Retrieve existing userInfo from localStorage
-      const existingUserInfo = JSON.parse(localStorage.getItem("userInfo"));
-      // Update the userInfo object with the new data
-      const updatedUserInfo = {
-        ...existingUserInfo,
-        name: name ? name : existingUserInfo.name,
-        password: password ? password : existingUserInfo.password,
-        image: image ? image : existingUserInfo.image,
-      };
+      }
+    );
+    // Retrieve existing userInfo from localStorage
+    const existingUserInfo = JSON.parse(localStorage.getItem("userInfo"));
+    // Update the userInfo object with the new data
+    const updatedUserInfo = {
+      ...existingUserInfo,
+      name: name ? name : existingUserInfo.name,
+      password: password ? password : existingUserInfo.password,
+      image: image ? image : existingUserInfo.image,
+    };
 
-      // Set the updated userInfo back to localStorage
-      localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
-      dispatch(setUserInfo(data));
-      localStorage.setItem(
-        "userInfo",
-        JSON.stringify(getState().reset.userInfo)
-      );
-      location.reload();
-    } catch (error) {
-      const errorMessage =
-        error.response && error.response.data
-          ? error.response.data
-          : error.message;
-      dispatch(setError(errorMessage));
-    }
-  };
+    // Set the updated userInfo back to localStorage
+    localStorage.setItem("userInfo", JSON.stringify(updatedUserInfo));
+    dispatch(setUserInfo(data));
+    localStorage.setItem("userInfo", JSON.stringify(getState().reset.userInfo));
+    location.reload();
+  } catch (error) {
+    const errorMessage =
+      error.response && error.response.data
+        ? error.response.data
+        : error.message;
+    dispatch(setError(errorMessage));
+  }
+};

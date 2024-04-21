@@ -141,7 +141,7 @@ const MainHomeScreen = () => {
       setLoading(true);
       try {
         // Fetch hotels from the API
-        const response = await fetch("http://localhost:3000/api/hotels");
+        const response = await fetch("https://travelix-backend-v2.vercel.app/api/hotels");
         if (!response.ok) {
           throw new Error("Failed to fetch Hotels");
         }
@@ -159,7 +159,7 @@ const MainHomeScreen = () => {
       setLoading(true);
       try {
         // Fetch hotels from the API
-        const response = await fetch("http://localhost:3000/api/vehicle");
+        const response = await fetch("https://travelix-backend-v2.vercel.app/api/vehicle");
         if (!response.ok) {
           throw new Error("Failed to fetch Vehicles");
         }
@@ -177,7 +177,7 @@ const MainHomeScreen = () => {
       setLoading(true);
       try {
         // Fetch hotels from the API
-        const response = await fetch("http://localhost:3000/api/tours");
+        const response = await fetch("https://travelix-backend-v2.vercel.app/api/tours");
         if (!response.ok) {
           throw new Error("Failed to fetch Tours");
         }
@@ -193,7 +193,7 @@ const MainHomeScreen = () => {
 
     const fetchReview = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/reviews");
+        const response = await fetch("https://travelix-backend-v2.vercel.app/api/reviews");
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
@@ -467,7 +467,7 @@ const MainHomeScreen = () => {
                   <div className="details">
                     <div className="imgBx">
                       <img
-                        src={`http://localhost:3000/${review.user.image}`}
+                        src={`https://travelix-backend-v2.vercel.app/${review.user.image}`}
                         alt={review.user.name}
                       />
                     </div>

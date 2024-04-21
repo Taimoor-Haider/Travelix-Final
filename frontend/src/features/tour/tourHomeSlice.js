@@ -41,7 +41,9 @@ export default tourHomeListSlice.reducer;
 export const fetchTours = () => async (dispatch) => {
   try {
     dispatch(setLoading());
-    const { data } = await axios.get("http://localhost:3000/api/tours");
+    const { data } = await axios.get(
+      "https://travelix-backend-v2.vercel.app/api/tours"
+    );
     console.log(data);
     dispatch(setTours(data));
   } catch (error) {

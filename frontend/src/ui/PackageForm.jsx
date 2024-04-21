@@ -8,8 +8,8 @@ import { packageFormSelector } from "../features/PackageFromSlice";
 import { setDate, setPersons } from "../features/PackageFromSlice";
 function PackageForm({ tourPackage }) {
   const [selectedDate, setSelectedDate] = useState("");
-  const [numOfPersons, setNumOfPersons] = useState(1);
-  const [adults, setAdults] = useState(1);
+  const [numOfPersons, setNumOfPersons] = useState(0);
+  const [adults, setAdults] = useState(0);
 
   const { date, noOfPersons } = useSelector(packageFormSelector);
   const dispatch = useDispatch();
@@ -50,12 +50,12 @@ function PackageForm({ tourPackage }) {
     navigate(
       `/tour/booking/${tourPackage._id}?dateIndex=${
         selectedDate ? selectedDate : "0"
-      }&persons=${numOfPersons}`
+      }&persons=${numOfPersons === 0 ? 1 : numOfPersons}`
     );
     dispatch(
       setDate(tourPackage.availableDates[selectedDate ? selectedDate : 0])
     );
-    dispatch(setPersons(numOfPersons));
+    dispatch(setPersons(numOfPersons === 0 ? 1 : numOfPersons));
   };
   return (
     <>
@@ -81,7 +81,11 @@ function PackageForm({ tourPackage }) {
         </div>
       </details>
 
-      <button className="btn bg-[#008395]" onClick={handleNavigationChange}>
+      <button
+        className="btn bg-[#008395]"
+        onClick={handleNavigationChange}
+        disabled={tourPackage.personsAllowed === 0}
+      >
         Book
       </button>
       <Badge

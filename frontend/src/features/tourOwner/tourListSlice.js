@@ -59,7 +59,7 @@ export const fetchTourList = (ownerId) => async (dispatch) => {
   try {
     dispatch(setLoading());
     const { data } = await axios.get(
-      `http://localhost:3000/api/tours/user/${ownerId}`
+      `https://travelix-backend-v2.vercel.app/api/tours/user/${ownerId}`
     );
     dispatch(setTours(data));
     console.log(data);
@@ -75,7 +75,9 @@ export const fetchTourList = (ownerId) => async (dispatch) => {
 export const fetchTour = (id) => async (dispatch) => {
   try {
     dispatch(setLoading());
-    const { data } = await axios.get(`http://localhost:3000/api/tours/${id}`);
+    const { data } = await axios.get(
+      `https://travelix-backend-v2.vercel.app/api/tours/${id}`
+    );
     dispatch(setTour(data));
   } catch (error) {
     const errorMessage =
@@ -88,7 +90,9 @@ export const fetchTour = (id) => async (dispatch) => {
 export const deleteTourById = (id) => async (dispatch, getState) => {
   try {
     const { _id } = getState().login.userInfo;
-    await axios.delete(`http://localhost:3000/api/tours/${id}`);
+    await axios.delete(
+      `https://travelix-backend-v2.vercel.app/api/tours/${id}`
+    );
     dispatch(fetchTourList(_id));
   } catch (error) {
     const errorMessage =
@@ -103,7 +107,7 @@ export const fetchBookingsOfOwner = (ownerId) => async (dispatch) => {
   try {
     dispatch(setLoading());
     const { data } = await axios.get(
-      `http://localhost:3000/api/bookings/owner/${ownerId}`
+      `https://travelix-backend-v2.vercel.app/api/bookings/owner/${ownerId}`
     );
     dispatch(setOwnerBookings(data));
   } catch (error) {
@@ -119,7 +123,7 @@ export const becomeUser = (userId) => async (dispatch) => {
   try {
     dispatch(setLoading());
     const { data } = await axios.put(
-      `http://localhost:3000/api/auth/updateRole`,
+      `https://travelix-backend-v2.vercel.app/api/auth/updateRole`,
       {
         ownerId: userId,
       }

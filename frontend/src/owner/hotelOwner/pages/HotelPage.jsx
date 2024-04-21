@@ -140,7 +140,7 @@ function HotelPage() {
           };
 
           const response = await axios.post(
-            "http://localhost:3000/api/hotels",
+            "https://travelix-backend-v2.vercel.app/api/hotels",
             requestData
           );
           console.log("Response:", response.data);
@@ -177,7 +177,7 @@ function HotelPage() {
       formData.append("photos", files[i]);
     }
     const { data: fileNames } = await axios.post(
-      "http://localhost:3000/upload",
+      "https://travelix-backend-v2.vercel.app/upload",
       formData,
       {
         headers: {
@@ -248,7 +248,7 @@ function HotelPage() {
                 >
                   <div className="listing-img">
                     <img
-                      src={`http://localhost:3000/${hotel.images[0]}`}
+                      src={`https://travelix-backend-v2.vercel.app/${hotel.images[0]}`}
                       alt="hotel"
                     />
                   </div>
@@ -359,7 +359,7 @@ function HotelPage() {
                     <div className="h-32 flex">
                       <img
                         className="rounded-2xl w-full object-cover"
-                        src={`http://localhost:3000/${link}`}
+                        src={`https://travelix-backend-v2.vercel.app/${link}`}
                         alt="link"
                         key={link}
                       />

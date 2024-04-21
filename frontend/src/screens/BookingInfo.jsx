@@ -25,15 +25,24 @@ function BookingInfo() {
   const { View } = useLottie(options);
   const validationSchema = Yup.object().shape({
     fullName: Yup.string()
+      .trim() // Trim whitespace
       .min(3, "Full name must be at least 3 characters")
       .required("Full name is required"),
     cnic: Yup.string()
-      .matches(/^\d{13}$/, "CNIC must be exactly 13 digits")
+      .trim() // Trim whitespace
+      .matches(/^\d{13}$/, {
+        message: "CNIC must be exactly 13 digits",
+        excludeEmptyString: true, // Exclude empty string from the error message
+      })
+      .matches(/^\d+$/, "CNIC must contain only numbers") // Only numbers allowed
       .required("CNIC is required"),
-    gender: Yup.string().required("Gender is required"),
+    gender: Yup.string()
+      .trim() // Trim whitespace
+      .required("Gender is required"),
     persons: Yup.array().of(
       Yup.object().shape({
         email: Yup.string()
+          .trim() // Trim whitespace
           .email("Invalid email")
           .matches(
             /^[a-zA-Z0-9.]+@[a-zA-Z]+\.[a-zA-Z]{2,}$/,
@@ -41,13 +50,20 @@ function BookingInfo() {
           )
           .required("Email is required"),
         cnic: Yup.string()
-          .matches(/^\d{13}$/, "CNIC must be exactly 13 digits")
+          .trim() // Trim whitespace
+          .matches(/^\d{13}$/, {
+            message: "CNIC must be exactly 13 digits",
+            excludeEmptyString: true, // Exclude empty string from the error message
+          })
+          .matches(/^\d+$/, "CNIC must contain only numbers") // Only numbers allowed
           .required("CNIC is required"),
         number: Yup.string()
+          .trim() // Trim whitespace
           .matches(
             /^[0-9]{11}$/,
             "Number must be 11 digits and contain only numbers"
           )
+          .matches(/^\d+$/, "Number must contain only numbers") // Only numbers allowed
           .required("Account number is required"),
       })
     ),

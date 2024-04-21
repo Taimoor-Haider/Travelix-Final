@@ -22,7 +22,7 @@ function ProfilePage() {
       <div id="profile-left-container">
         <div id="profile-picture">
           <img
-            src={`http://localhost:3000/${userInfo?.image}`}
+            src={`https://travelix-backend-v2.vercel.app/${userInfo?.image}`}
             alt="User Image"
           />
         </div>

@@ -28,7 +28,7 @@ function HotelEditPage() {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          `http://localhost:3000/api/hotels/${id}`
+          `https://travelix-backend-v2.vercel.app/api/hotels/${id}`
         );
         setHotel(data);
       } catch (error) {
@@ -130,7 +130,7 @@ function HotelEditPage() {
         };
 
         const response = await axios.put(
-          `http://localhost:3000/api/hotels/${id}`,
+          `https://travelix-backend-v2.vercel.app/api/hotels/${id}`,
           requestData
         );
 
@@ -153,7 +153,7 @@ function HotelEditPage() {
       formData.append("photos", files[i]);
     }
     const { data: fileNames } = await axios.post(
-      "http://localhost:3000/upload",
+      "https://travelix-backend-v2.vercel.app/upload",
       formData,
       {
         headers: {
@@ -231,7 +231,7 @@ function HotelEditPage() {
                 <div className="h-32 flex">
                   <img
                     className="rounded-2xl w-full object-cover"
-                    src={`http://localhost:3000/${link}`}
+                    src={`https://travelix-backend-v2.vercel.app/${link}`}
                     alt="link"
                     key={link}
                   />

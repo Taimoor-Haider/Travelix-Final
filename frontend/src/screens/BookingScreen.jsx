@@ -31,7 +31,7 @@ function BookingScreen() {
   const dateIndex = params.get("dateIndex")
     ? parseInt(params.get("dateIndex"))
     : 0;
-  const persons = params.get("persons") ? parseInt(params.get("persons")) : 0;
+  const persons = params.get("persons") ? parseInt(params.get("persons")) : 1;
   // useEffect(() => {
   //   if (
   //     !bookingPackage ||

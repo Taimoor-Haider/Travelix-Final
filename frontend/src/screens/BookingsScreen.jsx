@@ -126,14 +126,15 @@ function BookingsScreen() {
                 {console.log(
                   "Booking Date" + booking.bookedItem.bookingDate?.finishDate
                 )}
-                {(currentDate >
-                  new Date(booking.bookedItem.tourDate?.finishDate) ||
+                {((!booking.feedbackGiven &&
+                  currentDate >
+                    new Date(booking.bookedItem.tourDate?.finishDate)) ||
                   currentDate >
                     new Date(booking.bookedItem.bookingDate?.finishDate)) && (
                   <button
                     className="bg-blue-500 text-white py-2 px-4 rounded-md mt-4"
                     onClick={() =>
-                      handleEndDateButtonClick(booking.bookedItem.item)
+                      handleEndDateButtonClick(booking.bookedItem.item?._id)
                     }
                   >
                     Give Feedback

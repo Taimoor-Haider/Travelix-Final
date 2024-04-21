@@ -69,7 +69,7 @@ export const checkAvailability =
       console.log("ID" + vehicleId);
 
       const response = await axios.post(
-        "http://localhost:3000/api/vehicle/booking/check-availability",
+        "https://travelix-backend-v2.vercel.app/api/vehicle/booking/check-availability",
         {
           startDate: startDate,
           finishDate: finishDate,

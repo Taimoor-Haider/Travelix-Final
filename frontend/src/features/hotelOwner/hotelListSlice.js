@@ -58,7 +58,7 @@ export const fetchHotelList = (ownerId) => async (dispatch) => {
   try {
     dispatch(setLoading());
     const { data } = await axios.get(
-      `http://localhost:3000/api/hotels/user/${ownerId}`
+      `https://travelix-backend-v2.vercel.app/api/hotels/user/${ownerId}`
     );
     console.log(data);
     dispatch(setHotels(data));
@@ -74,7 +74,9 @@ export const fetchHotelList = (ownerId) => async (dispatch) => {
 export const fetchHotel = (id) => async (dispatch) => {
   try {
     dispatch(setLoading());
-    const { data } = await axios.get(`http://localhost:3000/api/hotels/${id}`);
+    const { data } = await axios.get(
+      `https://travelix-backend-v2.vercel.app/api/hotels/${id}`
+    );
     dispatch(setHotel(data));
   } catch (error) {
     const errorMessage =
@@ -87,7 +89,9 @@ export const fetchHotel = (id) => async (dispatch) => {
 export const deleteHotelById = (id) => async (dispatch, getState) => {
   try {
     const { _id } = getState().login.userInfo;
-    await axios.delete(`http://localhost:3000/api/hotels/${id}`);
+    await axios.delete(
+      `https://travelix-backend-v2.vercel.app/api/hotels/${id}`
+    );
     dispatch(fetchHotelList(_id));
   } catch (error) {
     const errorMessage =
@@ -102,7 +106,7 @@ export const fetchBookingsOfOwner = (ownerId) => async (dispatch) => {
   try {
     dispatch(setLoading());
     const { data } = await axios.get(
-      `http://localhost:3000/api/hotel/booking/owner/${ownerId}`
+      `https://travelix-backend-v2.vercel.app/api/hotel/booking/owner/${ownerId}`
     );
     dispatch(setOwnerBookings(data));
   } catch (error) {

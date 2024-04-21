@@ -222,4 +222,26 @@ router.get("/owner/:ownerId", async (req, res) => {
     res.status(500).send(error.message);
   }
 });
+
+router.put("/updateFeedback/:productId", async (req, res) => {
+  const { productId } = req.params;
+
+  try {
+    // Find the booking by product ID and update feedbackGiven to true
+    const booking = await Booking.findOneAndUpdate(
+      { "bookedItem.item": productId }, // Assuming the product ID is stored in the bookedItem.item field
+      { feedbackGiven: true },
+      { new: true }
+    );
+
+    if (!booking) {
+      return res.status(404).send(false);
+    }
+    // Return the updated booking
+    return res.status(200).send(true);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(false);
+  }
+});
 module.exports = router;

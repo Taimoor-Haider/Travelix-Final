@@ -11,12 +11,20 @@ import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
   fullName: Yup.string()
+    .trim() // Trim whitespace
     .min(3, "Full name must be at least 3 characters")
     .required("Full name is required"),
   cnic: Yup.string()
-    .matches(/^\d{13}$/, "CNIC must be exactly 13 digits")
+    .trim() // Trim whitespace
+    .matches(/^\d{13}$/, {
+      message: "CNIC must be exactly 13 digits",
+      excludeEmptyString: true, // Exclude empty string from the error message
+    })
+    .matches(/^\d+$/, "CNIC must contain only numbers") // Only numbers allowed
     .required("CNIC is required"),
-  gender: Yup.string().required("Gender is required"),
+  gender: Yup.string()
+    .trim() // Trim whitespace
+    .required("Gender is required"),
 });
 
 const initialValues = {

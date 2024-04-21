@@ -41,7 +41,9 @@ export default tourDetailSlice.reducer;
 export const fetchTour = (id) => async (dispatch) => {
   try {
     dispatch(setLoading());
-    const { data } = await axios.get(`http://localhost:3000/api/tours/${id}`);
+    const { data } = await axios.get(
+      `https://travelix-backend-v2.vercel.app/api/tours/${id}`
+    );
     dispatch(setTourPackage(data));
   } catch (error) {
     // Handle error

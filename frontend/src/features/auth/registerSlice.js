@@ -72,7 +72,7 @@ export const registerUser =
       formData.append("image", image);
       formData.append("idCardImage", idCardImage);
       const response = await axios.post(
-        "http://localhost:3000/api/auth/register",
+        "https://travelix-backend-v2.vercel.app/api/auth/register",
         formData,
         {
           headers: {

@@ -23,7 +23,7 @@ function HotelPage() {
       setLoading(true);
       try {
         // Fetch hotels from the API
-        const response = await fetch("http://localhost:3000/api/hotels");
+        const response = await fetch("https://travelix-backend-v2.vercel.app/api/hotels");
         if (!response.ok) {
           throw new Error("Failed to fetch Hotels");
         }

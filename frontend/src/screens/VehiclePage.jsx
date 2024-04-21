@@ -24,7 +24,7 @@ function VehiclePage() {
     const fetchVehicles = async () => {
       setLoading(true);
       try {
-        const response = await fetch("http://localhost:3000/api/vehicle");
+        const response = await fetch("https://travelix-backend-v2.vercel.app/api/vehicle");
         if (!response.ok) {
           throw new Error("Failed to fetch vehicles");
         }

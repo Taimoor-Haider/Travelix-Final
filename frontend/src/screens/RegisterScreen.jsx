@@ -36,10 +36,10 @@ function RegisterScreen() {
     console.log("Form Submitted");
     setLoading(true);
     setError(null);
-
+    const lowercaseEmail = email.toLowerCase();
     const formData = new FormData();
     formData.append("name", name);
-    formData.append("email", email);
+    formData.append("email", lowercaseEmail);
     formData.append("phone", phone);
     formData.append("password", password);
     formData.append("role", selectedRole);
@@ -70,7 +70,7 @@ function RegisterScreen() {
 
     try {
       const response = await axios.post(
-        "https://travelix-backend-v2.vercel.app/api/users",
+        "https://travelix-backend-v2.vercel.app/api/auth/register",
         formData,
         {
           headers: {

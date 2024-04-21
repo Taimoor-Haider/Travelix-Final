@@ -30,7 +30,7 @@ function PasswordResetScreen() {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/auth/reset-password",
+        "https://travelix-backend-v2.vercel.app/api/auth/reset-password",
         {
           email,
           resetCode: code,
