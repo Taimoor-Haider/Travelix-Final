@@ -25,8 +25,8 @@ const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   const { userInfo } = useSelector(loginSelector);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  // const dispatch = useDispatch();
+  // const navigate = useNavigate();
   const toggleSidebar = () => setCollapsed(!collapsed);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -51,12 +51,12 @@ const Sidebar = () => {
     imageUrl: `http://localhost:3000/${userInfo?.image}`, // Placeholder image, replace with actual profile image URL
   };
 
-  const handleLogout = () => {
-    console.log("Clicked");
-    dispatch(logoutUser());
-    navigate("/login");
-    window.location.reload();
-  };
+  // const handleLogout = () => {
+  //   console.log("Clicked");
+  //   dispatch(logoutUser());
+  //   navigate("/login");
+  //   window.location.reload();
+  // };
 
   return (
     <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>

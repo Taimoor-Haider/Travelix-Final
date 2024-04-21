@@ -243,7 +243,7 @@ const MainHomeScreen = () => {
     setFilteredVehicles(top3Vehicles);
 
     console.log("Filtered Reviews : ", filteredLocalReviews);
-  }, [hotels, tours, vehicles]);
+  }, [hotels, tours, vehicles, reviews]);
 
   return (
     <>
@@ -444,6 +444,7 @@ const MainHomeScreen = () => {
           autoplay={{
             delay: 2000,
             disableOnInteraction: false,
+            // autoplay: true,
           }}
           coverflowEffect={{
             rotate: 0,
