@@ -97,6 +97,7 @@ const Sidebar = () => {
           {!collapsed && <span onClick={handleLogout}>Logout</span>}
         </Link>
       </div>
+      
     </div>
   );
 };

@@ -8,34 +8,35 @@ import { loginSelector } from "../../features/auth/loginSlice";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
-import CardCarousel from "../../components/CardCarousel";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
 import {
   deleteVehicleById,
   fetchVehicleList,
   vehcileListSelector,
 } from "../../features/vehicleOwner/vehicleListSlice";
+import ConfirmationModal from "../../components/ConfirmationModal";
+
 function VehiclePage() {
   const { action } = useParams();
   const { userInfo } = useSelector(loginSelector);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { loading, vehicles, error } = useSelector(vehcileListSelector);
+
   console.log(userInfo);
   console.log(action);
   const [vehicleModel, setVehicleModel] = useState("");
   const [vehicleType, setVehicleType] = useState("");
   const [location, setLocation] = useState("");
-  const [rentalCompanyName, setRentalCompanyName] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);
   // const [photoLink, setPhotoLink] = useState("");
   const [description, setDescription] = useState("");
   const [features, setFeatures] = useState([""]);
   const [additionalServices, setAdditionalServices] = useState([""]);
-  const [personsAllowed, setPersonsAllowed] = useState(1);
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState(1);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [submitloading, setSubmitloading] = useState(false);
+  const [submittingError, setSubmittingError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const handleFeaturesChange = (features) => {
     setFeatures(features);
@@ -50,80 +51,98 @@ function VehiclePage() {
   const handlePriceChange = (e) => {
     const inputValue = e.target.value;
     // Check if the input value is not empty and is not a negative number
-    if (inputValue === "" || parseFloat(inputValue) >= 0) {
+    if (inputValue === "" || parseFloat(inputValue) >= 1) {
       // Update the price state only if it's either empty or a non-negative number
       setPrice(inputValue);
     }
   };
-  const handlePersonsAllowedChange = (e) => {
-    const inputValue = e.target.value;
-    // Check if the input value is not empty and is not a negative number
-    if (inputValue === "" || parseInt(inputValue) >= 0) {
-      // Update the personsAllowed state only if it's either empty or a non-negative number
-      setPersonsAllowed(inputValue);
-    }
-  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      if (selectedFiles.length === 0) {
-        alert("Please select at least one image");
-      } else {
-        const uploadedFileNames = await uploadPhoto(selectedFiles);
-        const requestData = {
-          vehicleModel: vehicleModel,
-          vehicleType: vehicleType,
-          location: location,
-          rentalCompanyName: rentalCompanyName,
-          images: uploadedFileNames,
-          price: price,
-          maxPersonsAllowed: personsAllowed,
-          features: features.filter((feature) => feature !== ""), // Remove empty features
-          description: description,
-          vehicleOwner: userInfo?._id,
-          additionalServices: additionalServices.filter(
-            (service) => service !== ""
-          ), // Remove empty additional services
-        };
+    // Check if any of the required fields are empty or contain only white spaces
+    if (
+      !vehicleModel.trim() ||
+      !vehicleType.trim() ||
+      !location.trim() ||
+      !description.trim() ||
+      features.some((amenity) => !amenity.trim()) ||
+      additionalServices.some((service) => !service.trim())
+    ) {
+      alert(
+        "Please fill out all fields and ensure they are not empty or contain only white spaces."
+      );
+      return; // Prevent form submission
+    }
 
-        const response = await axois.post(
-          "http://localhost:3000/api/vehicle",
-          requestData
-        );
-        console.log("Response:", response.data);
-        setVehicleModel("");
-        setVehicleType("");
-        setLocation("");
-        setRentalCompanyName("");
-        setAddedPhotos([]);
-        // setPhotoLink("");
-        setDescription("");
-        setFeatures([""]);
-        setAdditionalServices([""]);
-        setPersonsAllowed(1);
-        setPrice(0);
+    // Check if amenities are empty
+    if (features.length === 0) {
+      alert("Features cannot be empty. Please select at least 1 Feature.");
+      return; // Prevent form submission
+    } else if (additionalServices.length === 0) {
+      alert("Additional Services must contain at least one.");
+      return; // Prevent form submission
+    }
+    setShowModal(true); // Show the confirmation modal
+  };
 
-        navigate("/product/vehicles");
-        window.location.reload();
+  const handleConfirmation = async (confirm) => {
+    if (confirm) {
+      try {
+        if (selectedFiles.length === 0) {
+          alert("Please select at least one image");
+          showModal(false);
+          return;
+        } else {
+          setShowModal(false);
+          setSubmitloading(true);
+          const uploadedFileNames = await uploadPhoto(selectedFiles);
+
+          const requestData = {
+            vehicleModel: vehicleModel,
+            vehicleType: vehicleType,
+            location: location,
+            images: uploadedFileNames,
+            price: price,
+            // maxPersonsAllowed: personsAllowed,
+            features: features.filter((feature) => feature !== ""), // Remove empty features
+            description: description,
+            vehicleOwner: userInfo?._id,
+            additionalServices: additionalServices.filter(
+              (service) => service !== ""
+            ), // Remove empty additional services
+          };
+
+          const response = await axois.post(
+            "http://localhost:3000/api/vehicle",
+            requestData
+          );
+          console.log("Response:", response.data);
+          setVehicleModel("");
+          setVehicleType("");
+          setLocation("");
+          setAddedPhotos([]);
+          // setPhotoLink("");
+          setDescription("");
+          setFeatures([""]);
+          setAdditionalServices([""]);
+          // setPersonsAllowed(1);
+          setPrice(1);
+
+          navigate("/product/vehicles");
+        }
+      } catch (error) {
+        console.log(error.message);
+        setSubmittingError(erroe.response.data);
       }
-    } catch (error) {
-      console.log(error.message);
+      navigate("./product/vehicles");
+      window.location.reload();
+    } else {
+      setShowModal(false);
     }
   };
 
-  // const addPhotoByLink = async () => {
-  //   const { data: fileName } = await axois.post(
-  //     "http://localhost:3000/upload-by-link",
-  //     {
-  //       link: photoLink,
-  //     }
-  //   );
-  //   setAddedPhotos((pre) => {
-  //     return [...pre, fileName];
-  //   });
-  //   // setPhotoLink("");
-  // };
+
 
   const uploadPhoto = async (files) => {
     const formData = new FormData();
@@ -141,6 +160,7 @@ function VehiclePage() {
     );
     return fileNames;
   };
+
   const handleVehcileDetail = (id) => {
     navigate(`/vehicleDetail/${id}`);
   };
@@ -218,10 +238,7 @@ function VehiclePage() {
                     <p className="text-start">
                       <strong>Location:</strong> {vehicle.location}
                     </p>
-                    <p className="text-start">
-                      <strong>Rental Company:</strong>{" "}
-                      {vehicle.rentalCompanyName}
-                    </p>
+
                     <p className="text-start  mb-[1rem]">
                       <strong>Price:</strong>
                       {vehicle.price} Rs/-
@@ -266,60 +283,53 @@ function VehiclePage() {
       )}
       {action === "new" && (
         <div>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="model" value="Vehicle Model" />
+          {submitloading ? (
+            <Loader />
+          ) : submittingError ? (
+            <Message>{submittingError}</Message>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <div>
+                <div className="mb-1 block">
+                  <Label htmlFor="model" value="Vehicle Model" />
+                </div>
+                <TextInput
+                  id="model"
+                  type="text"
+                  placeholder="Model (e.g., Toyota Corolla 2017)"
+                  required
+                  value={vehicleModel}
+                  onChange={(e) => setVehicleModel(e.target.value)}
+                />
               </div>
-              <TextInput
-                id="model"
-                type="text"
-                placeholder="Model (e.g., Toyota Corolla 2017)"
-                required
-                value={vehicleModel}
-                onChange={(e) => setVehicleModel(e.target.value)}
-              />
-            </div>
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="type" value="Vehicle Type" />
+              <div>
+                <div className="mb-1 block">
+                  <Label htmlFor="type" value="Vehicle Type" />
+                </div>
+                <TextInput
+                  id="type"
+                  type="text"
+                  placeholder="Type (e.g., Sedan)"
+                  required
+                  value={vehicleType}
+                  onChange={(e) => setVehicleType(e.target.value)}
+                />
               </div>
-              <TextInput
-                id="type"
-                type="text"
-                placeholder="Type (e.g., Sedan)"
-                required
-                value={vehicleType}
-                onChange={(e) => setVehicleType(e.target.value)}
-              />
-            </div>
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="location" value="Location" />
+              <div>
+                <div className="mb-1 block">
+                  <Label htmlFor="location" value="Location" />
+                </div>
+                <TextInput
+                  id="location"
+                  type="text"
+                  placeholder="Type (e.g., Faislabad)"
+                  required
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
               </div>
-              <TextInput
-                id="location"
-                type="text"
-                placeholder="Type (e.g., Faislabad)"
-                required
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              />
-            </div>
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="company" value="Rental company name" />
-              </div>
-              <TextInput
-                id="company"
-                type="text"
-                placeholder="Type (e.g., City Drive Rentals)"
-                required
-                value={rentalCompanyName}
-                onChange={(e) => setRentalCompanyName(e.target.value)}
-              />
-            </div>
-            {/* <div>
+
+              {/* <div>
               <div className="mb-1 block">
                 <Label htmlFor="photo" value="Photos" />
                 <p className="text-gray-500 text-sm">more better</p>
@@ -342,116 +352,113 @@ function VehiclePage() {
                 </button>
               </div>
             </div> */}
-            <div className="grid grid-cols-3 gap-2 lg:grid-cols-6 md:grid-cols-4 mt-2">
-              {addedPhotos.length > 0 &&
-                addedPhotos.map((link) => (
-                  <div className="h-32 flex">
-                    <img
-                      className="rounded-2xl w-full object-cover"
-                      src={`http://localhost:3000/${link}`}
-                      alt="link"
-                      key={link}
+              <div className="grid grid-cols-3 gap-2 lg:grid-cols-6 md:grid-cols-4 mt-2">
+                {addedPhotos.length > 0 &&
+                  addedPhotos.map((link) => (
+                    <div className="h-32 flex">
+                      <img
+                        className="rounded-2xl w-full object-cover"
+                        src={`http://localhost:3000/${link}`}
+                        alt="link"
+                        key={link}
+                      />
+                    </div>
+                  ))}
+                <label className="border-2 cursor-pointer bg-gray-200 rounded-2xl p-8 text-2xl text-gray-600 hover:bg-gray-300 flex justify-center items-center">
+                  <input
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-6 h-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
+                    />
+                  </svg>
+                  Upload
+                </label>
+              </div>
+
+              <div>
+                <div className="mb-1 block">
+                  <Label htmlFor="desc" value="Description" />
+                </div>
+                <p className="text-gray-500 text-sm">
+                  description of the vehicle
+                </p>
+                <Textarea
+                  id="desc"
+                  placeholder="description..."
+                  required
+                  rows={4}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+                <div>
+                  <div className="mb-1 block">
+                    <Label htmlFor="features" value="Features" />
+                  </div>
+                  <p className="text-gray-500 text-sm">
+                    features of the vehicle [Air conditioning, Bluetooth
+                    connectivity, Unlimited mileage]
+                  </p>
+                  <Features
+                    selected={features}
+                    onChange={handleFeaturesChange}
+                  />
+                </div>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  <div>
+                    <div className="mb-1 block">
+                      <Label htmlFor="price" value="Price" />
+                    </div>
+
+                    <TextInput
+                      id="price"
+                      type="number"
+                      placeholder="PKR"
+                      required
+                      value={price}
+                      onChange={handlePriceChange}
                     />
                   </div>
-                ))}
-              <label className="border-2 cursor-pointer bg-gray-200 rounded-2xl p-8 text-2xl text-gray-600 hover:bg-gray-300 flex justify-center items-center">
-                <input
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-6 h-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
-                  />
-                </svg>
-                Upload
-              </label>
-            </div>
-
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="desc" value="Description" />
-              </div>
-              <p className="text-gray-500 text-sm">
-                description of the vehicle
-              </p>
-              <Textarea
-                id="desc"
-                placeholder="description..."
-                required
-                rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-              <div>
-                <div className="mb-1 block">
-                  <Label htmlFor="features" value="Features" />
-                </div>
-                <p className="text-gray-500 text-sm">
-                  features of the vehicle [Air conditioning, Bluetooth
-                  connectivity, Unlimited mileage]
-                </p>
-                <Features selected={features} onChange={handleFeaturesChange} />
-              </div>
-              <div className="grid sm:grid-cols-2 gap-2">
-                <div>
-                  <div className="mb-1 block">
-                    <Label htmlFor="price" value="Price" />
-                  </div>
-
-                  <TextInput
-                    id="price"
-                    type="number"
-                    placeholder="PKR"
-                    required
-                    value={price}
-                    onChange={handlePriceChange}
-                  />
                 </div>
                 <div>
                   <div className="mb-1 block">
-                    <Label htmlFor="personsAllowed" value="Persons Allowed" />
+                    <Label htmlFor="services" value="Additional services" />
                   </div>
-
-                  <TextInput
-                    id="personsAllowed"
-                    type="number"
-                    placeholder="1"
-                    required
-                    value={personsAllowed}
-                    onChange={handlePersonsAllowedChange}
+                  <p className="text-gray-500 text-sm">
+                    Additional services of the vehicle [GPS rental, Child seat
+                    rental, Additional driver option,]
+                  </p>
+                  <Features
+                    selected={additionalServices}
+                    onChange={handleAditionalServicesChange}
                   />
                 </div>
+                <Button type="submit" className="mt-5">
+                  Submit
+                </Button>
               </div>
-              <div>
-                <div className="mb-1 block">
-                  <Label htmlFor="services" value="Additional services" />
-                </div>
-                <p className="text-gray-500 text-sm">
-                  Additional services of the vehicle [GPS rental, Child seat
-                  rental, Additional driver option,]
-                </p>
-                <Features
-                  selected={additionalServices}
-                  onChange={handleAditionalServicesChange}
-                />
-              </div>
-              <Button type="submit" className="mt-5">
-                Submit
-              </Button>
-            </div>
-          </form>
+            </form>
+          )}
+          {showModal && (
+            <ConfirmationModal
+              Modaltext="You will not be able to edit dates and duration. 
+              Are you sure you want to submit the form?"
+              handleConfirmation={handleConfirmation}
+            />
+          )}
         </div>
       )}
     </div>

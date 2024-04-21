@@ -22,8 +22,8 @@ function TourEditPage() {
   const [error, setError] = useState(null);
   const [durationWarning, setDurationWarning] = useState("");
   const [duration, setDuration] = useState("");
-  const [confirm, setConfirm] = useState(false);
-
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -68,6 +68,13 @@ function TourEditPage() {
     }
   };
 
+  const handlePriceChange = (e) => {
+    const inputValue = e.target.value;
+    if (inputValue === "" || parseFloat(inputValue) >= 1) {
+      setTour({ ...tour, price: inputValue });
+    }
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
@@ -75,6 +82,16 @@ function TourEditPage() {
     if (tour.amenities.length === 0) {
       alert("Amenities cannot be empty. Please select at least one amenity.");
       return; // Prevent form submission
+    } else if (
+      !tour.place.trim() ||
+      !tour.title.trim() ||
+      !tour.description.trim() ||
+      tour.amenities.some((amenity) => !amenity.trim()) 
+    ) {
+      alert(
+        "Please fill out all fields and ensure they are not empty or contain only white spaces."
+      );
+      return;
     }
     setShowModal(true); // Show the confirmation modal
   };
@@ -88,7 +105,8 @@ function TourEditPage() {
           console.log("Uplaoded file names: " + uploadedFileNames);
           console.log("Selected Files: " + selectedFiles);
         }
-
+        setShowModal(false);
+        setEditLoading(true);
         const requestData = {
           place: tour.place,
           title: tour.title,
@@ -108,9 +126,10 @@ function TourEditPage() {
           `http://localhost:3000/api/tours/${id}`,
           requestData
         );
+        setEditLoading(false);
         console.log("Response:", response.data);
       } catch (error) {
-        console.log(error.message);
+        setEditError(error.response.data);
       }
       navigate("/product/tours");
       window.location.reload();
@@ -153,177 +172,186 @@ function TourEditPage() {
   return (
     <div>
       <h1>Edit Tour</h1>
+      {editLoading ? (
+        <Loader />
+      ) : editError ? (
+        <Message>editError</Message>
+      ) : (
+        <form onSubmit={handleFormSubmit}>
+          <div>
+            <div className="mb-1 block">
+              <Label htmlFor="place" value="Place*" />
+            </div>
+            <TextInput
+              id="place"
+              type="text"
+              placeholder="Place (e.g., Paris)"
+              required
+              value={tour?.place || ""}
+              onChange={(e) => setTour({ ...tour, place: e.target.value })}
+            />
+          </div>
+          <div>
+            <div className="mb-1 block">
+              <Label htmlFor="title" value="Title*" />
+            </div>
+            <TextInput
+              id="title"
+              type="text"
+              placeholder="Title (e.g., Eiffel Tower Tour)"
+              required
+              value={tour?.title || ""}
+              onChange={(e) => setTour({ ...tour, title: e.target.value })}
+            />
+          </div>
+          <div>
+            <div className="mb-1 block">
+              <Label htmlFor="description" value="Description*" />
+            </div>
+            <Textarea
+              id="description"
+              placeholder="Description..."
+              required
+              rows={4}
+              value={tour?.description || ""}
+              onChange={(e) =>
+                setTour({ ...tour, description: e.target.value })
+              }
+            />
+          </div>
 
-      <form onSubmit={handleFormSubmit}>
-        <div>
-          <div className="mb-1 block">
-            <Label htmlFor="place" value="Place*" />
+          <div>
+            <div className="mb-1 block">
+              <Label htmlFor="duration" value="Duration" />
+            </div>
+            <TextInput
+              id="duration"
+              type="text"
+              placeholder="Type no of Days"
+              // required
+              disabled
+              value={tour?.duration || ""}
+              onChange={handleDuration}
+              onKeyPress={handleNegativeDuration}
+              // onChange={(e) => setTour({ ...tour, duration: e.target.value })}
+            />
+            {durationWarning && (
+              <div className="text-red-500">{durationWarning}</div>
+            )}
           </div>
-          <TextInput
-            id="place"
-            type="text"
-            placeholder="Place (e.g., Paris)"
-            required
-            value={tour?.place || ""}
-            onChange={(e) => setTour({ ...tour, place: e.target.value })}
-          />
-        </div>
-        <div>
-          <div className="mb-1 block">
-            <Label htmlFor="title" value="Title*" />
-          </div>
-          <TextInput
-            id="title"
-            type="text"
-            placeholder="Title (e.g., Eiffel Tower Tour)"
-            required
-            value={tour?.title || ""}
-            onChange={(e) => setTour({ ...tour, title: e.target.value })}
-          />
-        </div>
-        <div>
-          <div className="mb-1 block">
-            <Label htmlFor="description" value="Description*" />
-          </div>
-          <Textarea
-            id="description"
-            placeholder="Description..."
-            required
-            rows={4}
-            value={tour?.description || ""}
-            onChange={(e) => setTour({ ...tour, description: e.target.value })}
-          />
-        </div>
-
-        <div>
-          <div className="mb-1 block">
-            <Label htmlFor="duration" value="Duration" />
-          </div>
-          <TextInput
-            id="duration"
-            type="text"
-            placeholder="Type no of Days"
-            // required
-            disabled
-            value={tour?.duration || ""}
-            onChange={handleDuration}
-            onKeyPress={handleNegativeDuration}
-            // onChange={(e) => setTour({ ...tour, duration: e.target.value })}
-          />
-          {durationWarning && (
-            <div className="text-red-500">{durationWarning}</div>
-          )}
-        </div>
-        <div className="grid grid-cols-3 gap-2 lg:grid-cols-6 md:grid-cols-4 mt-2">
-          {tour?.images.length > 0 &&
-            tour?.images.map((link) => (
-              <div className="h-32 flex">
-                <img
-                  className="rounded-2xl w-full object-cover"
-                  src={`http://localhost:3000/${link}`}
-                  alt="link"
-                  key={link}
+          <div className="grid grid-cols-3 gap-2 lg:grid-cols-6 md:grid-cols-4 mt-2">
+            {tour?.images.length > 0 &&
+              tour?.images.map((link) => (
+                <div className="h-32 flex">
+                  <img
+                    className="rounded-2xl w-full object-cover"
+                    src={`http://localhost:3000/${link}`}
+                    alt="link"
+                    key={link}
+                  />
+                </div>
+              ))}
+            <label className="border-2 cursor-pointer bg-gray-200 rounded-2xl p-8 text-2xl text-gray-600 hover:bg-gray-300 flex justify-center items-center">
+              <input
+                type="file"
+                multiple
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
                 />
-              </div>
-            ))}
-          <label className="border-2 cursor-pointer bg-gray-200 rounded-2xl p-8 text-2xl text-gray-600 hover:bg-gray-300 flex justify-center items-center">
-            <input
-              type="file"
-              multiple
-              className="hidden"
-              onChange={handleFileChange}
-            />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
-              />
-            </svg>
-            Upload
-          </label>
-        </div>
+              </svg>
+              Upload
+            </label>
+          </div>
 
-        <div>
           <div>
-            <div className="mb-1 block">
-              <Label htmlFor="Amenities" value="Emenities*" />
-            </div>
-            <p className="text-gray-500 text-sm">
-              Amenities of the Tour [Mountain view 🏔️, Guided hiking tours 🥾,
-              Local cuisine tasting 🍲,Cultural workshops and classes 🎨]
-            </p>
-            <Features
-              selected={tour?.amenities}
-              onChange={(seletectedAmenities) =>
-                setTour({ ...tour, amenities: seletectedAmenities })
-              }
-            />
-          </div>
-          <div>
-            <div className="mb-1 block">
-              <Label htmlFor="TourDates" value="Tour Dates" />
-            </div>
-            <p className="text-gray-500 text-sm">
-              Select the Start and End Dates for the Tour
-            </p>
-            <DateSelector
-              selected={tour?.availableDates || []}
-              duration={Number(duration)}
-              edit={true}
-              // onChange={handleAvailibleDates}
-              onChange={(seletectedDates) =>
-                setTour({ ...tour, availableDates: seletectedDates })
-              }
-              // setTour({ ...tour, duration: e.target.value })
-            />
-          </div>
-          <div className="grid sm:grid-cols-2 gap-2">
             <div>
               <div className="mb-1 block">
-                <Label htmlFor="price" value="Price*" />
+                <Label htmlFor="Amenities" value="Emenities*" />
               </div>
-
-              <TextInput
-                id="price"
-                type="number"
-                placeholder="PKR"
-                required
-                value={tour?.price || ""}
-                onChange={(e) => setTour({ ...tour, price: e.target.value })}
-              />
-            </div>
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="maxGuestsAllowed" value="Persons Allowed*" />
-              </div>
-
-              <TextInput
-                id="maxGuestsAllowed"
-                type="number"
-                placeholder="1"
-                required
-                value={tour?.personsAllowed || ""}
-                onChange={(e) =>
-                  setTour({ ...tour, personsAllowed: e.target.value })
+              <p className="text-gray-500 text-sm">
+                Amenities of the Tour [Mountain view 🏔️, Guided hiking tours 🥾,
+                Local cuisine tasting 🍲,Cultural workshops and classes 🎨]
+              </p>
+              <Features
+                selected={tour?.amenities}
+                onChange={(seletectedAmenities) =>
+                  setTour({ ...tour, amenities: seletectedAmenities })
                 }
               />
             </div>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-2"></div>
+            <div>
+              <div className="mb-1 block">
+                <Label htmlFor="TourDates" value="Tour Dates" />
+              </div>
+              <p className="text-gray-500 text-sm">
+                Select the Start and End Dates for the Tour
+              </p>
+              <DateSelector
+                selected={tour?.availableDates || []}
+                duration={Number(duration)}
+                edit={true}
+                // onChange={handleAvailibleDates}
+                onChange={(seletectedDates) =>
+                  setTour({ ...tour, availableDates: seletectedDates })
+                }
+                // setTour({ ...tour, duration: e.target.value })
+              />
+            </div>
+            <div className="grid sm:grid-cols-2 gap-2">
+              <div>
+                <div className="mb-1 block">
+                  <Label htmlFor="price" value="Price*" />
+                </div>
 
-          <Button type="submit" className="mt-5">
-            Submit
-          </Button>
-        </div>
-      </form>
+                <TextInput
+                  id="price"
+                  type="number"
+                  placeholder="PKR"
+                  required
+                  value={tour?.price || ""}
+                  // onChange={(e) => setTour({ ...tour, price: e.target.value })}
+                  onChange={handlePriceChange}
+                />
+              </div>
+              <div>
+                <div className="mb-1 block">
+                  <Label htmlFor="maxGuestsAllowed" value="Persons Allowed*" />
+                </div>
+
+                <TextInput
+                  id="maxGuestsAllowed"
+                  type="number"
+                  placeholder="1"
+                  required
+                  value={tour?.personsAllowed || ""}
+                  onChange={(e) =>
+                    setTour({ ...tour, personsAllowed: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-2"></div>
+
+            <Button type="submit" className="mt-5">
+              Submit
+            </Button>
+          </div>
+        </form>
+      )}
+
       {showModal && (
         <ConfirmationModal
           Modaltext="Are you sure you want to submit the form?"

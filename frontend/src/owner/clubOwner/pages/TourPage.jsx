@@ -37,7 +37,9 @@ function TourPage() {
   const [price, setPrice] = useState(1);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [durationWarning, setDurationWarning] = useState("");
-
+  const [submitloading, setSubmitloading] = useState(false);
+  const [submittingError, setSubmittingError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const handleEmenitiesChange = (emenities) => {
     setAmenities(emenities);
   };
@@ -52,47 +54,77 @@ function TourPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      if (selectedFiles.length === 0) {
-        alert("Please select at least one image!");
+    if (
+      !place.trim() ||
+      !title.trim() ||
+      !description.trim() ||
+      amenities.some((amenity) => !amenity.trim()) 
+    ) {
+      alert(
+        "Please fill out all fields and ensure they are not empty or contain only white spaces."
+      );
+      return; // Prevent form submission
+    }
+    // Check if amenities are empty
+    if (amenities.length === 0) {
+      alert("Amenities cannot be empty. Please select at least one amenity.");
+      return; // Prevent form submission
+    }
+    setShowModal(true); // Show the confirmation modal
+  };
+
+  const handleConfirmation = async (confirm) => {
+    if (confirm) {
+      try {
+        if (selectedFiles.length === 0) {
+          alert("Please select at least one image!");
+          setShowModal(false); // Show the confirmation
+          return;
+        } else if (availableDates.length === 0) {
+          alert("Add the Date!");
+          setShowModal(false); // Show the confirmation
+          return;
+        } else {
+          setShowModal(false); // Hide the confirmation modal
+          setSubmitloading(true);
+          const uploadedFileNames = await uploadPhoto(selectedFiles);
+          const requestData = {
+            place: place,
+            title: title,
+            tourOwner: userInfo?._id,
+            description: description,
+            images: uploadedFileNames,
+            duration: duration,
+            personsAllowed: personsAllowed,
+            amenities: amenities.filter((amenity) => amenity !== ""),
+            availableDates: availableDates,
+            price: price,
+          };
+          const response = await axios.post(
+            "http://localhost:3000/api/tours",
+            requestData
+          );
+
+          console.log("Response:", response.data);
+          setSubmitloading(false);
+          setPlace("");
+          setTitle("");
+          setDescription("");
+          setAddedPhotos([]);
+          setDuration("");
+          setPersonsAllowed(1);
+          setAmenities([""]);
+          setAvailableDates([]);
+          setPrice(1);
+          setSelectedFiles([]);
+        }
+      } catch (error) {
+        setSubmittingError(error.response.data);
       }
-      else if (availableDates.length === 0) {
-        alert("Add the Date!");
-      } 
-      else {
-        const uploadedFileNames = await uploadPhoto(selectedFiles);
-        const requestData = {
-          place: place,
-          title: title,
-          tourOwner: userInfo?._id,
-          description: description,
-          images: uploadedFileNames,
-          duration: duration,
-          personsAllowed: personsAllowed,
-          amenities: amenities.filter((amenity) => amenity !== ""),
-          availableDates: availableDates,
-          price: price,
-        };
-        const response = await axios.post(
-          "http://localhost:3000/api/tours",
-          requestData
-        );
-        console.log("Response:", response.data);
-        setPlace("");
-        setTitle("");
-        setDescription("");
-        setAddedPhotos([]);
-        setDuration("");
-        setPersonsAllowed(1);
-        setAmenities([""]);
-        setAvailableDates([]);
-        setPrice(1);
-        setSelectedFiles([]);
-        navigate("/product/tours");
-        window.location.reload();
-      }
-    } catch (error) {
-      console.log(error.message);
+      navigate("/product/tours");
+      // window.location.reload();
+    } else {
+      setShowModal(false); // Hide the confirmation modal
     }
   };
 
@@ -262,167 +294,186 @@ function TourPage() {
       )}
       {action === "new" && (
         <div>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="place" value="Place*" />
+          {submitloading ? (
+            <Loader />
+          ) : submittingError ? (
+            <Message>{submittingError}</Message>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <div>
+                <div className="mb-1 block">
+                  <Label htmlFor="place" value="Place*" />
+                </div>
+                <TextInput
+                  id="place"
+                  type="text"
+                  placeholder="Place (e.g., Paris)"
+                  required
+                  value={place}
+                  onChange={(e) => setPlace(e.target.value)}
+                />
               </div>
-              <TextInput
-                id="place"
-                type="text"
-                placeholder="Place (e.g., Paris)"
-                required
-                value={place}
-                onChange={(e) => setPlace(e.target.value)}
-              />
-            </div>
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="title" value="Title*" />
+              <div>
+                <div className="mb-1 block">
+                  <Label htmlFor="title" value="Title*" />
+                </div>
+                <TextInput
+                  id="title"
+                  type="text"
+                  placeholder="Title (e.g., Eiffel Tower Tour)"
+                  required
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
               </div>
-              <TextInput
-                id="title"
-                type="text"
-                placeholder="Title (e.g., Eiffel Tower Tour)"
-                required
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </div>
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="description" value="Description*" />
+              <div>
+                <div className="mb-1 block">
+                  <Label htmlFor="description" value="Description*" />
+                </div>
+                <Textarea
+                  id="description"
+                  placeholder="Description..."
+                  required
+                  rows={4}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
               </div>
-              <Textarea
-                id="description"
-                placeholder="Description..."
-                required
-                rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </div>
 
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="duration" value="Duration (No of Days only)*" />
+              <div>
+                <div className="mb-1 block">
+                  <Label
+                    htmlFor="duration"
+                    value="Duration (No of Days only)*"
+                  />
+                </div>
+                <TextInput
+                  id="duration"
+                  type="text"
+                  placeholder="Type days only (4, 5, 10 ...)"
+                  required
+                  value={duration}
+                  onChange={handleDuration}
+                  onKeyPress={handleNegativeDuration}
+                  // onChange={(e) => setDuration(e.target.value)}
+                />
+                {durationWarning && (
+                  <div className="text-red-500">{durationWarning}</div>
+                )}
               </div>
-              <TextInput
-                id="duration"
-                type="text"
-                placeholder="Type days only (4, 5, 10 ...)"
-                required
-                value={duration}
-                onChange={handleDuration}
-                onKeyPress={handleNegativeDuration}
-                // onChange={(e) => setDuration(e.target.value)}
-              />
-              {durationWarning && (
-                <div className="text-red-500">{durationWarning}</div>
-              )}
-            </div>
-            <div className="grid grid-cols-3 gap-2 lg:grid-cols-6 md:grid-cols-4 mt-2">
-              {addedPhotos.length > 0 &&
-                addedPhotos.map((link) => (
-                  <div className="h-32 flex">
-                    <img
-                      className="rounded-2xl w-full object-cover"
-                      src={`http://localhost:3000/${link}`}
-                      alt="link"
-                      key={link}
+              <div className="grid grid-cols-3 gap-2 lg:grid-cols-6 md:grid-cols-4 mt-2">
+                {addedPhotos.length > 0 &&
+                  addedPhotos.map((link) => (
+                    <div className="h-32 flex">
+                      <img
+                        className="rounded-2xl w-full object-cover"
+                        src={`http://localhost:3000/${link}`}
+                        alt="link"
+                        key={link}
+                      />
+                    </div>
+                  ))}
+                <label className="border-2 cursor-pointer bg-gray-200 rounded-2xl p-8 text-2xl text-gray-600 hover:bg-gray-300 flex justify-center items-center">
+                  <input
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-6 h-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
+                    />
+                  </svg>
+                  Upload
+                </label>
+              </div>
+
+              <div>
+                <div>
+                  <div className="mb-1 block">
+                    <Label htmlFor="Amenities" value="Emenities*" />
+                  </div>
+                  <p className="text-gray-500 text-sm">
+                    Amenities of the Tour [Mountain view 🏔️, Guided hiking tours
+                    🥾, Local cuisine tasting 🍲,Cultural workshops and classes
+                    🎨]
+                  </p>
+                  <Features
+                    selected={amenities}
+                    onChange={handleEmenitiesChange}
+                  />
+                </div>
+                <div>
+                  <div className="mb-1 block">
+                    <Label htmlFor="TourDates" value="Tour Dates" />
+                  </div>
+                  <p className="text-gray-500 text-sm">
+                    Select the Start and End Dates for the Tour
+                  </p>
+                  <DateSelector
+                    selected={availableDates}
+                    onChange={handleAvailibleDates}
+                    duration={Number(duration)} // Pass the duration prop here
+                  />
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-2">
+                  <div>
+                    <div className="mb-1 block">
+                      <Label htmlFor="price" value="Price*" />
+                    </div>
+
+                    <TextInput
+                      id="price"
+                      type="number"
+                      placeholder="PKR"
+                      required
+                      value={price}
+                      onChange={handlePriceChange}
                     />
                   </div>
-                ))}
-              <label className="border-2 cursor-pointer bg-gray-200 rounded-2xl p-8 text-2xl text-gray-600 hover:bg-gray-300 flex justify-center items-center">
-                <input
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-6 h-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
-                  />
-                </svg>
-                Upload
-              </label>
-            </div>
+                  <div>
+                    <div className="mb-1 block">
+                      <Label
+                        htmlFor="maxGuestsAllowed"
+                        value="Persons Allowed"
+                      />
+                    </div>
 
-            <div>
-              <div>
-                <div className="mb-1 block">
-                  <Label htmlFor="Amenities" value="Emenities*" />
-                </div>
-                <p className="text-gray-500 text-sm">
-                  Amenities of the Tour [Mountain view 🏔️, Guided hiking tours
-                  🥾, Local cuisine tasting 🍲,Cultural workshops and classes
-                  🎨]
-                </p>
-                <Features
-                  selected={amenities}
-                  onChange={handleEmenitiesChange}
-                />
-              </div>
-              <div>
-                <div className="mb-1 block">
-                  <Label htmlFor="TourDates" value="Tour Dates" />
-                </div>
-                <p className="text-gray-500 text-sm">
-                  Select the Start and End Dates for the Tour
-                </p>
-                <DateSelector
-                  selected={availableDates}
-                  onChange={handleAvailibleDates}
-                  duration={Number(duration)} // Pass the duration prop here
-                />
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-2">
-                <div>
-                  <div className="mb-1 block">
-                    <Label htmlFor="price" value="Price*" />
+                    <TextInput
+                      id="maxGuestsAllowed"
+                      type="number"
+                      placeholder="1"
+                      required
+                      value={personsAllowed}
+                      onChange={handlePersonsAllowedChange}
+                    />
                   </div>
-
-                  <TextInput
-                    id="price"
-                    type="number"
-                    placeholder="PKR"
-                    required
-                    value={price}
-                    onChange={handlePriceChange}
-                  />
                 </div>
-                <div>
-                  <div className="mb-1 block">
-                    <Label htmlFor="maxGuestsAllowed" value="Persons Allowed" />
-                  </div>
 
-                  <TextInput
-                    id="maxGuestsAllowed"
-                    type="number"
-                    placeholder="1"
-                    required
-                    value={personsAllowed}
-                    onChange={handlePersonsAllowedChange}
-                  />
-                </div>
+                <Button type="submit" className="mt-5">
+                  Submit
+                </Button>
               </div>
-
-              <Button type="submit" className="mt-5">
-                Submit
-              </Button>
-            </div>
-          </form>
+            </form>
+          )}
+          {showModal && (
+            <ConfirmationModal
+              Modaltext="You will not be able to edit dates and duration. 
+              Are you sure you want to submit the form?"
+              handleConfirmation={handleConfirmation}
+            />
+          )}
         </div>
       )}
     </div>

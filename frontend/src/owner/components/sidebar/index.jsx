@@ -8,6 +8,8 @@ import {
   FaChartPie,
   FaCog,
   FaBars,
+  FaUser,
+  FaCreditCard,
   FaSignOutAlt,
   FaSmile,
 } from "react-icons/fa";
@@ -18,6 +20,8 @@ import { loginSelector } from "../../../features/auth/loginSlice";
 // import { loginSelector } from "../../../features";
 
 import { useDispatch } from "react-redux";
+import { logoutUser } from "../../../features/auth/loginSlice";
+import { useNavigate } from "react-router-dom";
 import { becomeUser } from "../../../features/tourOwner/tourListSlice";
 
 const Sidebar = () => {
@@ -26,11 +30,12 @@ const Sidebar = () => {
   const { userInfo } = useSelector(loginSelector);
   const toggleSidebar = () => setCollapsed(!collapsed);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const menuItem = [
-    { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
-    { name: "Bookings", icon: <FaCalendarAlt />, path: "/bookings" },
-    { name: "Tours", icon: <FaCar />, path: "/product" },
-    { name: "Vehicles & Hotels", icon: <FaSmile />, path: "" },
+    // { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
+    { name: "Profile", icon: <FaUser />, path: "/product" },
+    { name: "Bookings", icon: <FaCreditCard />, path: "/product/bookings" },
+    { name: "Vehicles", icon: <FaCar />, path: "/product/vehicles" },
   ];
   const userProfile = {
     name: "Admin Name",
@@ -42,6 +47,12 @@ const Sidebar = () => {
       console.log("Become User");
       dispatch(becomeUser(userInfo._id));
     }
+  };
+  const handleLogout = () => {
+    console.log("Clicked");
+    dispatch(logoutUser());
+    navigate("/login");
+    window.location.reload();
   };
 
   return (
@@ -80,7 +91,7 @@ const Sidebar = () => {
       <div className={`sidebar-footer ${collapsed ? "collapsed" : ""}`}>
         <Link className={`${collapsed ? "footer-collapsed" : ""}`}>
           <FaSignOutAlt />
-          {!collapsed && <span>Logout</span>}
+          {!collapsed && <span onClick={handleLogout}>Logout</span>}
         </Link>
       </div>
     </div>

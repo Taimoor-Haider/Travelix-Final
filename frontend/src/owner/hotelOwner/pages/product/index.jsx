@@ -101,6 +101,7 @@ function Index() {
           <ProfilePage />
           <button
             className="py-2 max-w-sm mx-auto bg-primary hover:bg-teal-500"
+            style={{padding: "1rem 2rem",color: "white", borderRadius: "10px"}}
             onClick={handleLogout}
           >
             Logout

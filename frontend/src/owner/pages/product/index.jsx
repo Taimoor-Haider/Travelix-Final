@@ -8,11 +8,14 @@ import OwnerBookings from "../OwnerBookings";
 import { useDispatch } from "react-redux";
 import { vehcileListSelector } from "../../../features/vehicleOwner/vehicleListSlice";
 import ProfilePage from "../ProfilePage";
+import { useNavigate } from "react-router-dom";
+
 function Index() {
   const { userInfo } = useSelector(loginSelector);
 
   const { ownerBookings } = useSelector(vehcileListSelector);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   let { subpage } = useParams();
   console.log(subpage);
   if (!subpage) {
@@ -99,6 +102,11 @@ function Index() {
           <ProfilePage />
           <button
             className="py-2 max-w-sm mx-auto bg-primary hover:bg-teal-500"
+            style={{
+              padding: "1rem 2rem",
+              color: "white",
+              borderRadius: "10px",
+            }}
             onClick={handleLogout}
           >
             Logout

@@ -9,27 +9,46 @@ import {
   FaCog,
   FaBars,
   FaSignOutAlt,
+  FaUser,
+  FaCreditCard,
+  FaHotel
 } from "react-icons/fa";
 import "./Sidebar.css"; // Assuming you have a corresponding CSS file for styling
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { loginSelector } from "../../../../features/auth/loginSlice";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../../../../features/auth/loginSlice";
+
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   const { userInfo } = useSelector(loginSelector);
   const toggleSidebar = () => setCollapsed(!collapsed);
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   const menuItem = [
-    { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
-    { name: "Bookings", icon: <FaCalendarAlt />, path: "/bookings" },
-    { name: "Hotels", icon: <FaCar />, path: "/product" },
+    { name: "Profile", icon: <FaUser />, path: "/product" },
+    { name: "Bookings", icon: <FaCreditCard />, path: "/product/bookings" },
+    { name: "Hotels", icon: <FaHotel />, path: "/product/hotels" },
+    // { name: "Hotels", icon: <FaCar />, path: "/product" },
+    // { name: "Hotels", icon: <FaCar />, path: "/product" },
   ];
+
+  const handleLogout =  () => {
+    console.log("Clicked");
+     dispatch(logoutUser());
+     navigate("/login");
+    window.location.reload();
+  };
+
   const userProfile = {
     name: "Admin Name",
     imageUrl:
-      "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg", // Placeholder image, replace with actual profile image URL
+      `http://localhost:3000/${userInfo?.image}`, // Placeholder image, replace with actual profile image URL
   };
 
   return (
@@ -68,9 +87,10 @@ const Sidebar = () => {
       <div className={`sidebar-footer ${collapsed ? "collapsed" : ""}`}>
         <Link className={`${collapsed ? "footer-collapsed" : ""}`}>
           <FaSignOutAlt />
-          {!collapsed && <span>Logout</span>}
+          {!collapsed && <span onClick={handleLogout}>Logout</span>}
         </Link>
       </div>
+
     </div>
   );
 };
