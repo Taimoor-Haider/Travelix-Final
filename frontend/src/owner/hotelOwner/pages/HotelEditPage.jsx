@@ -54,12 +54,13 @@ function HotelEditPage() {
       setHotel({ ...hotel, price: inputValue });
     }
   };
-  const handleGuestChange = (e) => {
-    const inputValue = e.target.value;
-    if (inputValue === "" || parseFloat(inputValue) >= 1) {
-      setHotel({ ...hotel, maxGuestsAllowed: inputValue });
-    }
-  };
+  
+  // const handleGuestChange = (e) => {
+  //   const inputValue = e.target.value;
+  //   if (inputValue === "" || parseFloat(inputValue) >= 1) {
+  //     setHotel({ ...hotel, maxGuestsAllowed: inputValue });
+  //   }
+  // };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -117,7 +118,7 @@ function HotelEditPage() {
             uploadedFileNames.length > 0 ? uploadedFileNames : hotel.images,
           price: hotel.price,
           // roomType: hotel.roomType,
-          maxGuestsAllowed: hotel.maxGuestsAllowed,
+          // maxGuestsAllowed: hotel.maxGuestsAllowed,
           amenities: hotel.amenities.filter((amenity) => amenity !== ""), // Remove empty features
           description: hotel.description,
           hotelOwner: userInfo?._id,
@@ -325,23 +326,7 @@ function HotelEditPage() {
                   onChange={handlePriceChange}
                 />
               </div>
-              <div>
-                <div className="mb-1 block">
-                  <Label htmlFor="maxGuestsAllowed" value="Max guest Allowed" />
-                </div>
 
-                <TextInput
-                  id="maxGuestsAllowed"
-                  type="number"
-                  placeholder="1"
-                  required
-                  value={hotel?.maxGuestsAllowed || ""}
-                  // onChange={(e) =>
-                  //   setHotel({ ...hotel, maxGuestsAllowed: e.target.value })
-                  // }
-                  onChange={handleGuestChange}
-                />
-              </div>
             </div>
 
             <div>

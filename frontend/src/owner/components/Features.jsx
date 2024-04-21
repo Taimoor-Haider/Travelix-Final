@@ -24,7 +24,7 @@ function Features({ selected = [], onChange }) {
 
   return (
     <div>
-      <h2 className="py-2 font-bold inline-block">Car Features</h2>
+      {/* <h2 className="py-2 font-bold inline-block"></h2> */}
       {selected.map((feature, index) => (
         <div key={index}>
           <TextInput

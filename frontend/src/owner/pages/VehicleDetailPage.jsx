@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import Rating from "../../components/Rating";
 import EmenitiesModal from "../../components/EmenitiesModal";
 import { useSelector, useDispatch } from "react-redux";
-import { Button } from "flowbite-react";
+import { Button, Carousel } from "flowbite-react";
 import { fetchVehicle } from "../../features/vehicleOwner/vehicleListSlice";
 import { vehcileListSelector } from "../../features/vehicleOwner/vehicleListSlice";
 import Loader from "../../components/Loader";
@@ -13,6 +13,7 @@ import Message from "../../components/Message";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import FeedBackSection from "../../ui/FeedBackSection";
+import "../clubOwner/pages/Details.css";
 
 function VehicleDetailPage() {
   const { id } = useParams();
@@ -29,6 +30,9 @@ function VehicleDetailPage() {
   const handleResponse = (feedbackId) => {
     navigate(`/feedback/response/${feedbackId}`);
   };
+
+  console.log("Vehicle Data", vehicle);
+
   return (
     <>
       {loading ? (
@@ -42,37 +46,49 @@ function VehicleDetailPage() {
               <FontAwesomeIcon icon={faArrowLeft} />
               &nbsp;&nbsp; Back
             </Button>
-            <div className="grid-3">
-              <div className="grid-of-images">
-                <div s style={{ width: "100%", height: "100%" }}>
-                  <CardCarousel images={vehicle.images} flag={true} />
-                </div>
-              </div>
+
+            <div className="h-70 sm:h-70 xl:h-80 2xl:h-96">
+              <Carousel className="j-crousal-img">
+                {vehicle.images.map((image, index) => (
+                  <img key={vehicle._id} src={image} alt={`Image ${index}`} />
+                ))}
+              </Carousel>
+            </div>
+
+            <div>
               <div>
-                <ul class="w-96 text-surface dark:text-white">
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10">
-                    <p className="text-2xl font-medium">
-                      {vehicle.vehicleModel}
-                    </p>
-                  </li>
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10">
-                    <p className="text-xl font-medium">{vehicle.vehicleType}</p>
-                  </li>
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10">
-                    <Rating
-                      value={vehicle.rating}
-                      text={`by ${vehicle.noOfReviews} users.`}
-                    />
-                  </li>
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10">
-                    <p className="text-xl font-medium">
-                      {vehicle.rentalCompanyName}
-                    </p>
-                  </li>
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10">
-                    <p className="text-md font-medium">{vehicle.description}</p>
-                  </li>
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10">
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Model</h1>
+                  <p className="j-detail-p">{vehicle.vehicleModel}</p>
+                </div>
+
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Type</h1>
+                  <p className="j-detail-p">{vehicle.vehicleType}</p>
+                </div>
+
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Ratings</h1>
+                  <div style={{ flex: "1" }}>
+                    <Rating value={vehicle.rating} />
+                    {`No of Reviews : ${vehicle.noOfReviews}`}
+                  </div>
+                </div>
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Price</h1>
+                  <p className="j-detail-p"><strong>Rs {vehicle.price}</strong> / Per Day</p>
+                </div>
+
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Description</h1>
+                  <p className="j-detail-p">{vehicle.description}</p>
+                </div>
+
+                {/* Features */}
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Features</h1>
+
+                  <div style={{ flex: 1 }}>
                     {vehicle.features.map(
                       (feature, index) =>
                         // Display only the first 5 features
@@ -89,22 +105,20 @@ function VehicleDetailPage() {
                         items={vehicle.features}
                       />
                     )}
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <ul class="w-96 text-surface dark:text-white">
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10 flex justify-between items-center">
-                    <span className="text-2xl font-semibold">Price</span>
-                    <p className="text-2xl font-medium">{vehicle.price} Rs/-</p>
-                  </li>
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10">
+                  </div>
+                </div>
+
+                {/* Additional Services */}
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Additional Services</h1>
+
+                  <div style={{ flex: 1 }}>
                     {vehicle.additionalServices.map(
-                      (service, index) =>
+                      (feature, index) =>
                         // Display only the first 5 features
                         index < 5 && (
                           <span class="bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-                            {service}
+                            {feature}
                           </span>
                         )
                     )}
@@ -115,10 +129,11 @@ function VehicleDetailPage() {
                         items={vehicle.additionalServices}
                       />
                     )}
-                  </li>
-                </ul>
+                  </div>
+                </div>
               </div>
             </div>
+
             <section className="section-feedback">
               {vehicle.feedbacks.map(
                 (

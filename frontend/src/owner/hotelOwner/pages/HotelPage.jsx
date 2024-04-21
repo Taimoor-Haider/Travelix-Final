@@ -31,7 +31,7 @@ function HotelPage() {
   const [amenities, setEmenities] = useState([""]);
   const [policies, setPolicies] = useState([""]);
   const [additionalServices, setAdditionalServices] = useState([""]);
-  const [maxGuestsAllowed, setMaxGuestsAllowed] = useState(1);
+  // const [maxGuestsAllowed, setMaxGuestsAllowed] = useState(1);
   const [price, setPrice] = useState(1);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [latitude, setLatitude] = useState();
@@ -63,14 +63,14 @@ function HotelPage() {
     }
   };
 
-  const handlePersonsAllowedChange = (e) => {
-    const inputValue = e.target.value;
-    // Check if the input value is not empty and is not a negative number
-    if (inputValue === "" || parseInt(inputValue) >= 1) {
-      // Update the personsAllowed state only if it's either empty or a non-negative number
-      setMaxGuestsAllowed(inputValue);
-    }
-  };
+  // const handlePersonsAllowedChange = (e) => {
+  //   const inputValue = e.target.value;
+  //   // Check if the input value is not empty and is not a negative number
+  //   if (inputValue === "" || parseInt(inputValue) >= 1) {
+  //     // Update the personsAllowed state only if it's either empty or a non-negative number
+  //     setMaxGuestsAllowed(inputValue);
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     console.log("Submitting");
@@ -127,7 +127,7 @@ function HotelPage() {
             images: uploadedFileNames,
             price: price,
             // roomType: roomType,
-            maxGuestsAllowed: maxGuestsAllowed,
+            // maxGuestsAllowed: maxGuestsAllowed,
             amenities: amenities.filter((amenity) => amenity !== ""), // Remove empty features
             description: description,
             hotelOwner: userInfo?._id,
@@ -153,7 +153,7 @@ function HotelPage() {
           setEmenities([""]);
           setPolicies([""]);
           setAdditionalServices([""]);
-          setMaxGuestsAllowed(1);
+          // setMaxGuestsAllowed(1);
           setPrice(1);
           setSelectedFiles([]);
           setLatitude();
@@ -446,23 +446,7 @@ function HotelPage() {
                       onChange={handlePriceChange}
                     />
                   </div>
-                  <div>
-                    <div className="mb-1 block">
-                      <Label
-                        htmlFor="maxGuestsAllowed"
-                        value="Max guest Allowed"
-                      />
-                    </div>
-
-                    <TextInput
-                      id="maxGuestsAllowed"
-                      type="number"
-                      placeholder="1"
-                      required
-                      value={maxGuestsAllowed}
-                      onChange={handlePersonsAllowedChange}
-                    />
-                  </div>
+                 
                 </div>
 
                 <div>
