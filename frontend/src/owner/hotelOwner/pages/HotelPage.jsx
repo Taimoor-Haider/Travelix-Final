@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Button, Textarea, Label, TextInput } from "flowbite-react";
+import { Button, Textarea, Label, TextInput, Select } from "flowbite-react";
 import Features from "../components/Features";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,7 +23,7 @@ function HotelPage() {
   const { loading, hotels, error } = useSelector(hotelListSelector);
 
   const [hotelName, setHotelName] = useState("");
-  const [hotelChain, setHotelChain] = useState("");
+  const [hotelChain, setHotelChain] = useState("Delux");
   const [location, setLocation] = useState("");
   // const [roomType, setRoomType] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);
@@ -39,6 +39,10 @@ function HotelPage() {
   const [submitloading, setSubmitloading] = useState(false);
   const [submittingError, setSubmittingError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+
+  const handleHotelChainChange = (event) => {
+    setHotelChain(event.target.value);
+  };
 
   const handleEmenitiesChange = (emenities) => {
     setEmenities(emenities);
@@ -161,9 +165,14 @@ function HotelPage() {
           navigate("/product");
         }
       } catch (error) {
-        console.log(error.message);
-        setSubmittingError(error.response.data);
+        const errorMessage =
+          error.response && error.response.data
+            ? error.response.data
+            : error.message;
+        setSubmittingError(errorMessage);
+        console.log(errorMessage);
       }
+
       navigate("/product/hotels");
       window.location.reload();
     } else {
@@ -247,10 +256,7 @@ function HotelPage() {
                   onClick={handleDetails}
                 >
                   <div className="listing-img">
-                    <img
-                      src={`https://travelix-backend-v2.vercel.app/${hotel.images[0]}`}
-                      alt="hotel"
-                    />
+                    <img src={`${hotel.images[0]}`} alt="hotel" />
                   </div>
                   <div className="listing-details">
                     <h2 className="font-bold capitalize text-2xl mb-[4rem]">
@@ -330,15 +336,19 @@ function HotelPage() {
                 <div className="mb-1 block">
                   <Label htmlFor="hotelChain" value="Hotel Chain*" />
                 </div>
-                <TextInput
+                <Select
                   id="hotelChain"
-                  type="text"
-                  placeholder="Type (e.g., Luxury Collection)"
-                  required
+                  name="hotelChain"
                   value={hotelChain}
-                  onChange={(e) => setHotelChain(e.target.value)}
-                />
+                  required
+                  onChange={handleHotelChainChange}
+                >
+                  <option value="Delux">Delux</option>
+                  <option value="Exective">Exective</option>
+                  <option value="Luxury">Luxury</option>
+                </Select>
               </div>
+
               <div>
                 <div className="mb-1 block">
                   <Label htmlFor="location" value="Location*" />
@@ -446,7 +456,6 @@ function HotelPage() {
                       onChange={handlePriceChange}
                     />
                   </div>
-                 
                 </div>
 
                 <div>

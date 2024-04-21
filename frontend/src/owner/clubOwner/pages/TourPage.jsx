@@ -173,9 +173,14 @@ function TourPage() {
   };
 
   const handleDuration = (e) => {
-    if (!isNaN(Number(e.target.value))) {
-      setDuration(e.target.value);
-      setDurationWarning("");
+    const durationValue = Number(e.target.value);
+    if (!isNaN(durationValue) && durationValue >= 0) {
+      if (durationValue > 60) {
+        setDurationWarning("Duration cannot be greater than 60 days");
+      } else {
+        setDuration(durationValue);
+        setDurationWarning("");
+      }
     } else {
       setDurationWarning("Duration must be a positive number");
     }

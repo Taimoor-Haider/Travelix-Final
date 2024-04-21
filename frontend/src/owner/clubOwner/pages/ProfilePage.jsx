@@ -2,24 +2,25 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSelector } from "../../../features/auth/loginSlice";
 import { resetUser } from "../../../features/auth/resetUserSlice";
-
+import axios from "axios";
+import Loader from "../../../components/Loader";
+import Message from "../../../components/Message";
 function ProfilePage() {
   const { userInfo } = useSelector(loginSelector);
   const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
   const [image, setImage] = useState(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [resetPasswordVisible, setResetPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState("");
+  const [error, setError] = useState(null);
   const dispatch = useDispatch();
 
   const handleChangeInfo = () => {
     // Validation: Check if name is empty or contains only spaces
     if (!name.trim()) {
       alert("Name cannot be empty");
-      return;
-    }
-
-    // Validation: Check if both name and password are filled
-    if (!name || !password) {
-      alert("Please fill in both name and password");
       return;
     }
 
@@ -31,15 +32,45 @@ function ProfilePage() {
     // Check if the user confirmed
     if (confirmed) {
       console.log("Name:", name);
-      console.log("Password:", password);
       console.log("Image:", image);
-      dispatch(resetUser(name, password, image));
+      dispatch(resetUser(name, oldPassword, image));
     } else {
       // If user clicks "Cancel" or "No", do nothing
       return;
     }
   };
 
+  const toggleResetPassword = () => {
+    setResetPasswordVisible(!resetPasswordVisible);
+  };
+
+  const handleRestPassword = async (oldPassword, newPassword) => {
+    console.log("Clicked");
+    console.log(oldPassword);
+    console.log(newPassword);
+    try {
+      setLoading(true);
+      const { data } = await axios.put(
+        "https://travelix-backend-v2.vercel.app/api/auth/change-password",
+        {
+          userId: userInfo._id,
+          oldPassword,
+          newPassword,
+        }
+      );
+      console.log(data);
+      setResponse(data);
+      setLoading(false);
+    } catch (error) {
+      const errorMessage =
+        error.response && error.response.data
+          ? error.response.data
+          : error.message;
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="profile-container">
       <div id="profile-left-container">
@@ -64,17 +95,6 @@ function ProfilePage() {
             onChange={(e) => setName(e.target.value)}
           />
 
-          <label>Password</label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            placeholder="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
           <label>Profile Picture</label>
           <input
             id="profile"
@@ -90,6 +110,49 @@ function ProfilePage() {
               Update Profile
             </button>
           </div>
+
+          <button
+            type="button"
+            className="btn mt-2  btn-info"
+            onClick={toggleResetPassword}
+          >
+            {resetPasswordVisible ? "Hide Password Reset" : "Reset Password"}
+          </button>
+          {resetPasswordVisible && (
+            <>
+              <div className="my-4">
+                <input
+                  id="oldPassword"
+                  type="password"
+                  placeholder="Old Password"
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  required
+                  className="rounded-md p-2"
+                />
+
+                <input
+                  id="newPassword"
+                  type="password"
+                  placeholder="New Password"
+                  required
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="rounded-md p-2 mt-2"
+                />
+              </div>
+              <button
+                type="button"
+                className="btn btn-neutral"
+                onClick={() => handleRestPassword(oldPassword, newPassword)}
+              >
+                Change Password
+              </button>
+              {loading && <Loader />}
+              {response && <Message color="info">{response}</Message>}
+              {error && <Message>{error}</Message>}
+            </>
+          )}
         </form>
       </div>
     </div>

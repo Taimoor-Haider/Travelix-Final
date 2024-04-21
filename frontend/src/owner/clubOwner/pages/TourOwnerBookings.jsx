@@ -29,7 +29,7 @@ function TourOwnerBookings() {
           <div className="booking-card">
             <div className="booking-img">
               <img
-                src={`https://travelix-backend-v2.vercel.app/${booking.bookedItem.item.images[0]}`}
+                src={`${booking.bookedItem.item.images[0]}`}
                 alt="Booking Package"
               />
             </div>
@@ -45,7 +45,7 @@ function TourOwnerBookings() {
               </p>
               <p>
                 <strong>No. of Travelers</strong>
-                {booking.travellersInfo?.length}
+                {booking.travellersInfo?.length + 1}
               </p>
               <p>
                 <strong>Price:</strong> {booking.bookedItem.price} Rs/-

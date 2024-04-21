@@ -11,6 +11,7 @@ const nodemailer = require("nodemailer");
 //Get Users List
 
 const { storage } = require("../config/firebase"); // Assuming you have a Firebase configuration file
+const { image } = require("image-downloader");
 
 // Function to upload file to Firebase and return the URL
 async function uploadToFirebase(file) {
@@ -151,6 +152,7 @@ router.post("/resetUserInfo", async (req, res) => {
   const { _id, name, password } = req.body;
   console.log("kkljhjkhkj", req.files);
   const file = req.files?.image;
+  console.log(file);
 
   try {
     const user = await User.findById(_id);
@@ -163,7 +165,12 @@ router.post("/resetUserInfo", async (req, res) => {
       const imageUrl = await uploadToFirebase(file);
       user.image = imageUrl;
     }
+    console.log(user);
+
     await user.save();
+
+    console.log("User Saved");
+
     res.status(200).send(user);
   } catch (error) {
     console.error(error);
@@ -353,4 +360,5 @@ router.put("/updateRoleForUser", async (req, res) => {
     res.status(400).send(ex.message);
   }
 });
+
 module.exports = router;
