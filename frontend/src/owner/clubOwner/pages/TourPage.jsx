@@ -122,7 +122,7 @@ function TourPage() {
         setSubmittingError(error.response.data);
       }
       navigate("/product/tours");
-      // window.location.reload();
+      window.location.reload();
     } else {
       setShowModal(false); // Hide the confirmation modal
     }

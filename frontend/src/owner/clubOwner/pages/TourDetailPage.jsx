@@ -1,11 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CardCarousel from "../../../components/CardCarousel";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import Rating from "../../../components/Rating";
 import EmenitiesModal from "../../../components/EmenitiesModal";
 import { useSelector, useDispatch } from "react-redux";
-import { Button } from "flowbite-react";
 import { fetchTour } from "../../../features/tourOwner/tourListSlice";
 import { tourListSelector } from "../../../features/tourOwner/tourListSlice";
 import Loader from "../../../components/Loader";
@@ -13,6 +12,10 @@ import Message from "../../../components/Message";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import FeedBackSection from "../../../ui/FeedBackSection";
+import { Button, Carousel } from "flowbite-react";
+// import { Carousel } from "flowbite-react";
+
+import "./Details.css";
 
 function TourDetailPage() {
   const { id } = useParams();
@@ -21,6 +24,8 @@ function TourDetailPage() {
   const navigate = useNavigate();
   const { loading, tour, error } = useSelector(tourListSelector);
 
+  console.log("Tour Data", tour);
+
   useEffect(() => {
     dispatch(fetchTour(id));
   }, [id]);
@@ -28,6 +33,7 @@ function TourDetailPage() {
   const handleResponse = (feedbackId) => {
     navigate(`/feedback/response/${feedbackId}`);
   };
+
   return (
     <>
       {loading ? (
@@ -41,33 +47,50 @@ function TourDetailPage() {
               <FontAwesomeIcon icon={faArrowLeft} />
               &nbsp;&nbsp; Back
             </Button>
-            <div className="grid-3">
-              <div className="grid-of-images">
-                <div s style={{ width: "100%", height: "100%" }}>
-                  <CardCarousel images={tour.images} flag={true} />
-                </div>
-              </div>
+
+            <div className="h-70 sm:h-70 xl:h-80 2xl:h-96">
+              <Carousel className="j-crousal-img">
+                {tour.images.map((image, index) => (
+                  <img key={index} src={image} alt={`Image ${index}`} />
+                ))}
+              </Carousel>
+            </div>
+
+            <div>
               <div>
-                <ul class="w-96 text-surface dark:text-white">
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10">
-                    <p className="text-2xl font-medium">{tour.title}</p>
-                  </li>
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10">
-                    <p className="text-xl font-medium">{tour.place}</p>
-                  </li>
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10">
-                    <Rating
-                      value={tour.rating}
-                      text={`by ${tour.noOfReviews} users.`}
-                    />
-                  </li>
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10">
-                    <p className="text-xl font-medium">{tour.duration}</p>
-                  </li>
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10">
-                    <p className="text-md font-medium">{tour.description}</p>
-                  </li>
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10">
+                {/*  */}
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Tour Title</h1>
+                  <p className="j-detail-p">{tour.title}</p>
+                </div>
+
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Location</h1>
+                  <p className="j-detail-p">{tour.place}</p>
+                </div>
+
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Ratings</h1>
+                  <div style={{ flex: "1" }}>
+                    <Rating value={tour.rating} />
+                    {`No of Reviews : ${tour.noOfReviews}`}
+                  </div>
+                </div>
+
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Duration</h1>
+                  <p className="j-detail-p">{tour.duration} Days</p>
+                </div>
+
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Description</h1>
+                  <p className="j-detail-p">{tour.description}</p>
+                </div>
+
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Amenities</h1>
+
+                  <div style={{ flex: 1 }}>
                     {tour.amenities.map(
                       (amenity, index) =>
                         // Display only the first 5 features
@@ -84,24 +107,18 @@ function TourDetailPage() {
                         items={tour.amenities}
                       />
                     )}
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <ul class="w-96 text-surface dark:text-white">
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10 flex justify-between items-center">
-                    <span className="text-2xl font-semibold">Price</span>
-                    <p className="text-2xl font-medium">{tour.price} Rs/-s</p>
-                  </li>
-                  <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10 flex justify-between items-center">
-                    <span className="text-2xl font-semibold">
-                      Remaining Seats
-                    </span>
-                    <p className="text-2xl font-medium">
-                      {tour.personsAllowed}
-                    </p>
-                  </li>
-                </ul>
+                  </div>
+                </div>
+
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Price</h1>
+                  <p className="j-detail-p">{tour.price} Rs/-s</p>
+                </div>
+
+                <div className="j-key-detail-container">
+                  <h1 class="j-h1-detail">Remaining Seats</h1>
+                  <p className="j-detail-p">{tour.personsAllowed}</p>
+                </div>
               </div>
             </div>
             <section className="section-feedback">

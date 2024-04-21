@@ -74,6 +74,12 @@ function TourEditPage() {
       setTour({ ...tour, price: inputValue });
     }
   };
+  const handleMaxChange = (e) => {
+    const inputValue = e.target.value;
+    if (inputValue === "" || parseFloat(inputValue) >= 1) {
+      setTour({ ...tour, personsAllowed: inputValue });
+    }
+  };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -330,9 +336,10 @@ function TourEditPage() {
                 placeholder="1"
                 required
                 value={tour?.personsAllowed || ""}
-                onChange={(e) =>
-                  setTour({ ...tour, personsAllowed: e.target.value })
-                }
+                // onChange={(e) =>
+                //   setTour({ ...tour, personsAllowed: e.target.value })
+                // }
+                onChangeCapture={handleMaxChange}
               />
             </div>
           </div>
@@ -343,7 +350,6 @@ function TourEditPage() {
           </Button>
         </div>
       </form>
-      )}
       {showModal && (
         <ConfirmationModal
           Modaltext="Are you sure you want to submit the form?"
