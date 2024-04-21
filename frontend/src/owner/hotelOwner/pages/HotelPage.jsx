@@ -13,6 +13,7 @@ import {
   fetchHotelList,
   hotelListSelector,
 } from "../../../features/hotelOwner/hotelListSlice";
+import ConfirmationModal from "../../../components/ConfirmationModal";
 function HotelPage() {
   const { action } = useParams();
   const { userInfo } = useSelector(loginSelector);
@@ -23,7 +24,6 @@ function HotelPage() {
   const [hotelName, setHotelName] = useState("");
   const [hotelChain, setHotelChain] = useState("");
   const [location, setLocation] = useState("");
-  const [roomType, setRoomType] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [description, setDescription] = useState("");
   const [amenities, setEmenities] = useState([""]);
@@ -32,9 +32,9 @@ function HotelPage() {
   const [maxGuestsAllowed, setMaxGuestsAllowed] = useState(1);
   const [price, setPrice] = useState(0);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
-
+  const [showModal, setShowModal] = useState(false);
+  const [submittingLoading, setSubmittingLoading] = useState(false);
+  const [submittingError, setSubmittingError] = useState(null);
   const handleEmenitiesChange = (emenities) => {
     setEmenities(emenities);
   };
@@ -66,56 +66,76 @@ function HotelPage() {
     }
   };
   const handleSubmit = async (e) => {
+    console.log("Submitting");
+
     e.preventDefault();
 
-    try {
-      if (selectedFiles.length === 0) {
-        alert("Please select atleast one photo");
-      } else {
-        const uploadedFileNames = await uploadPhoto(selectedFiles);
+    // Check if amenities are empty
+    if (amenities.length === 0) {
+      alert("Amenities cannot be empty. Please select at least one amenity.");
+      return; // Prevent form submission
+    }
+    setShowModal(true); // Show the confirmation modal
+  };
 
-        const requestData = {
-          hotelName: hotelName,
-          location: location,
-          hotelChain: hotelChain,
-          images: uploadedFileNames,
-          price: price,
-          roomType: roomType,
-          maxGuestsAllowed: maxGuestsAllowed,
-          amenities: amenities.filter((amenity) => amenity !== ""), // Remove empty features
-          description: description,
-          hotelOwner: userInfo?._id,
-          latitude: latitude,
-          longitude: longitude,
-          additionalServices: additionalServices.filter(
-            (service) => service !== ""
-          ),
-          policies: policies.filter((policy) => policy !== ""),
-        };
+  const handleConfirmation = async (confirm) => {
+    if (confirm) {
+      try {
+        if (selectedFiles.length === 0) {
+          alert("Please select atleast one photo");
+          setShowModal(false);
+          return;
+        } else {
+          setSubmittingLoading(true);
+          setShowModal(false);
+          const uploadedFileNames = await uploadPhoto(selectedFiles);
+          const requestData = {
+            hotelName: hotelName,
+            location: location,
+            hotelChain: hotelChain,
+            images: uploadedFileNames,
+            price: price,
+            maxGuestsAllowed: maxGuestsAllowed,
+            amenities: amenities.filter((amenity) => amenity !== ""), // Remove empty features
+            description: description,
+            hotelOwner: userInfo?._id,
 
-        const response = await axios.post(
-          "http://localhost:3000/api/hotels",
-          requestData
-        );
-        console.log("Response:", response.data);
-        setHotelName("");
-        setHotelChain("");
-        setLocation("");
-        setRoomType("");
-        setAddedPhotos([]);
-        setDescription("");
-        setEmenities([""]);
-        setPolicies([""]);
-        setAdditionalServices([""]);
-        setMaxGuestsAllowed(1);
-        setPrice(0);
-        setSelectedFiles([]);
-        setLatitude("");
-        setLongitude("");
-        navigate("/product");
+            additionalServices: additionalServices.filter(
+              (service) => service !== ""
+            ),
+            policies: policies.filter((policy) => policy !== ""),
+          };
+
+          const response = await axios.post(
+            "http://localhost:3000/api/hotels",
+            requestData
+          );
+          setSubmittingLoading(false);
+          console.log("Response:", response.data);
+          setHotelName("");
+          setHotelChain("");
+          setLocation("");
+          setAddedPhotos([]);
+          setDescription("");
+          setEmenities([""]);
+          setPolicies([""]);
+          setAdditionalServices([""]);
+          setMaxGuestsAllowed(1);
+          setPrice(0);
+          setSelectedFiles([]);
+          navigate("/product");
+        }
+      } catch (error) {
+        const errorMessage =
+          error.response && error.response.data
+            ? error.response.data
+            : error.message;
+        setSubmittingError(errorMessage);
       }
-    } catch (error) {
-      console.log(error.message);
+      navigate("/product/hotels");
+      window.location.reload();
+    } else {
+      setShowModal(false); // Hide the confirmation modal
     }
   };
 
@@ -210,9 +230,7 @@ function HotelPage() {
                     <p className="text-start">
                       <strong>Location:</strong> {hotel.location}
                     </p>
-                    <p className="text-start">
-                      <strong>Room Type:</strong> {hotel.roomType}
-                    </p>
+
                     <p className="text-start  mb-[1rem]">
                       <strong>Price:</strong>
                       {hotel.price} Rs/-
@@ -257,214 +275,193 @@ function HotelPage() {
       )}
       {action === "new" && (
         <div>
-          <form onSubmit={handleSubmit}>
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="name" value="Hotel Name" />
+          {submittingLoading ? (
+            <Loader />
+          ) : submittingError ? (
+            <Message>{submittingError}</Message>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <h1 className="text-3xl text-center">Add Hotel</h1>
+              <div>
+                <div className="mb-1 block">
+                  <Label htmlFor="name" value="Hotel Name" />
+                </div>
+                <TextInput
+                  id="name"
+                  type="text"
+                  placeholder="Name (e.g., Grand Plaza Hotel)"
+                  required
+                  value={hotelName}
+                  onChange={(e) => setHotelName(e.target.value)}
+                />
               </div>
-              <TextInput
-                id="name"
-                type="text"
-                placeholder="Name (e.g., Grand Plaza Hotel)"
-                required
-                value={hotelName}
-                onChange={(e) => setHotelName(e.target.value)}
-              />
-            </div>
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="hotelChain" value="Hotel Chain" />
+              <div>
+                <div className="mb-1 block">
+                  <Label htmlFor="hotelChain" value="Hotel Chain" />
+                </div>
+                <TextInput
+                  id="hotelChain"
+                  type="text"
+                  placeholder="Type (e.g., Luxury Collection)"
+                  required
+                  value={hotelChain}
+                  onChange={(e) => setHotelChain(e.target.value)}
+                />
               </div>
-              <TextInput
-                id="hotelChain"
-                type="text"
-                placeholder="Type (e.g., Luxury Collection)"
-                required
-                value={hotelChain}
-                onChange={(e) => setHotelChain(e.target.value)}
-              />
-            </div>
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="location" value="Location" />
+              <div>
+                <div className="mb-1 block">
+                  <Label htmlFor="location" value="Location" />
+                </div>
+                <TextInput
+                  id="location"
+                  type="text"
+                  placeholder="Type (e.g., Faislabad)"
+                  required
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
               </div>
-              <TextInput
-                id="location"
-                type="text"
-                placeholder="Type (e.g., Faislabad)"
-                required
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              />
-            </div>
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="roomType" value="Romme type" />
+
+              <div className="grid grid-cols-3 gap-2 lg:grid-cols-6 md:grid-cols-4 mt-2">
+                {addedPhotos.length > 0 &&
+                  addedPhotos.map((link) => (
+                    <div className="h-32 flex">
+                      <img
+                        className="rounded-2xl w-full object-cover"
+                        src={`http://localhost:3000/${link}`}
+                        alt="link"
+                        key={link}
+                      />
+                    </div>
+                  ))}
+                <label className="border-2 cursor-pointer bg-gray-200 rounded-2xl p-8 text-2xl text-gray-600 hover:bg-gray-300 flex justify-center items-center">
+                  <input
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-6 h-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
+                    />
+                  </svg>
+                  Upload
+                </label>
               </div>
-              <TextInput
-                id="roomType"
-                type="text"
-                placeholder="Type (e.g., Deluxe Suite)"
-                required
-                value={roomType}
-                onChange={(e) => setRoomType(e.target.value)}
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-2 lg:grid-cols-6 md:grid-cols-4 mt-2">
-              {addedPhotos.length > 0 &&
-                addedPhotos.map((link) => (
-                  <div className="h-32 flex">
-                    <img
-                      className="rounded-2xl w-full object-cover"
-                      src={`http://localhost:3000/${link}`}
-                      alt="link"
-                      key={link}
+
+              <div>
+                <div className="mb-1 block">
+                  <Label htmlFor="desc" value="Description" />
+                </div>
+                <p className="text-gray-500 text-sm">
+                  description of the hotel
+                </p>
+                <Textarea
+                  id="desc"
+                  placeholder="description..."
+                  required
+                  rows={4}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+                <div>
+                  <div className="mb-1 block">
+                    <Label htmlFor="Amenities" value="Emenities" />
+                  </div>
+                  <p className="text-gray-500 text-sm">
+                    Amenities of the hotel [🏊‍♂️ Access to swimming pool, 🍳
+                    Complimentary breakfast, 🌐 Free Wi-Fi, 📺 Flat-screen TV]
+                  </p>
+                  <Features
+                    selected={amenities}
+                    onChange={handleEmenitiesChange}
+                  />
+                </div>
+                <div>
+                  <div className="mb-1 block">
+                    <Label htmlFor="Policies" value="Policies" />
+                  </div>
+                  <p className="text-gray-500 text-sm">
+                    Policies of the hotel [Cancellation policy: Free
+                    cancellation up to 48 hours before check-in.]
+                  </p>
+                  <Features
+                    selected={policies}
+                    onChange={handlePoliciesChange}
+                  />
+                </div>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  <div>
+                    <div className="mb-1 block">
+                      <Label htmlFor="price" value="Price" />
+                    </div>
+
+                    <TextInput
+                      id="price"
+                      type="number"
+                      placeholder="PKR"
+                      required
+                      value={price}
+                      onChange={handlePriceChange}
                     />
                   </div>
-                ))}
-              <label className="border-2 cursor-pointer bg-gray-200 rounded-2xl p-8 text-2xl text-gray-600 hover:bg-gray-300 flex justify-center items-center">
-                <input
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-6 h-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
-                  />
-                </svg>
-                Upload
-              </label>
-            </div>
+                  <div>
+                    <div className="mb-1 block">
+                      <Label
+                        htmlFor="maxGuestsAllowed"
+                        value="Max guest Allowed"
+                      />
+                    </div>
 
-            <div>
-              <div className="mb-1 block">
-                <Label htmlFor="desc" value="Description" />
-              </div>
-              <p className="text-gray-500 text-sm">description of the hotel</p>
-              <Textarea
-                id="desc"
-                placeholder="description..."
-                required
-                rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-              <div>
-                <div className="mb-1 block">
-                  <Label htmlFor="Amenities" value="Emenities" />
-                </div>
-                <p className="text-gray-500 text-sm">
-                  Amenities of the hotel [🏊‍♂️ Access to swimming pool, 🍳
-                  Complimentary breakfast, 🌐 Free Wi-Fi, 📺 Flat-screen TV]
-                </p>
-                <Features
-                  selected={amenities}
-                  onChange={handleEmenitiesChange}
-                />
-              </div>
-              <div>
-                <div className="mb-1 block">
-                  <Label htmlFor="Policies" value="Policies" />
-                </div>
-                <p className="text-gray-500 text-sm">
-                  Policies of the hotel [Cancellation policy: Free cancellation
-                  up to 48 hours before check-in.]
-                </p>
-                <Features selected={policies} onChange={handlePoliciesChange} />
-              </div>
-              <div className="grid sm:grid-cols-2 gap-2">
-                <div>
-                  <div className="mb-1 block">
-                    <Label htmlFor="price" value="Price" />
-                  </div>
-
-                  <TextInput
-                    id="price"
-                    type="number"
-                    placeholder="PKR"
-                    required
-                    value={price}
-                    onChange={handlePriceChange}
-                  />
-                </div>
-                <div>
-                  <div className="mb-1 block">
-                    <Label
-                      htmlFor="maxGuestsAllowed"
-                      value="Max guest Allowed"
+                    <TextInput
+                      id="maxGuestsAllowed"
+                      type="number"
+                      placeholder="1"
+                      required
+                      value={maxGuestsAllowed}
+                      onChange={handlePersonsAllowedChange}
                     />
                   </div>
-
-                  <TextInput
-                    id="maxGuestsAllowed"
-                    type="number"
-                    placeholder="1"
-                    required
-                    value={maxGuestsAllowed}
-                    onChange={handlePersonsAllowedChange}
-                  />
                 </div>
-              </div>
-              <div className="grid sm:grid-cols-2 gap-2">
+
                 <div>
                   <div className="mb-1 block">
-                    <Label htmlFor="longitude" value="Longitude" />
+                    <Label htmlFor="services" value="Additional services" />
                   </div>
-
-                  <TextInput
-                    id="longitude"
-                    type="text"
-                    placeholder="Type (e.g. 31.5204° N)"
-                    required
-                    value={longitude}
-                    onChange={(e) => setLongitude(e.target.value)}
+                  <p className="text-gray-500 text-sm">
+                    Additional services of the hotel [🚖 Airport shuttle, 🧖‍♀️ Spa
+                    services, 🍽️ In-room dining,]
+                  </p>
+                  <Features
+                    selected={additionalServices}
+                    onChange={handleAditionalServicesChange}
+                    required={false}
                   />
                 </div>
-                <div>
-                  <div className="mb-1 block">
-                    <Label htmlFor="latitude" value="Latitude" />
-                  </div>
-
-                  <TextInput
-                    id="latitude"
-                    type="text"
-                    placeholder="Type (e.g. 74.3587° E)"
-                    required
-                    value={latitude}
-                    onChange={(e) => setLatitude(e.target.value)}
-                  />
-                </div>
+                <Button type="submit" className="mt-5">
+                  Submit
+                </Button>
               </div>
-              <div>
-                <div className="mb-1 block">
-                  <Label htmlFor="services" value="Additional services" />
-                </div>
-                <p className="text-gray-500 text-sm">
-                  Additional services of the hotel [🚖 Airport shuttle, 🧖‍♀️ Spa
-                  services, 🍽️ In-room dining,]
-                </p>
-                <Features
-                  selected={additionalServices}
-                  onChange={handleAditionalServicesChange}
-                />
-              </div>
-              <Button type="submit" className="mt-5">
-                Submit
-              </Button>
-            </div>
-          </form>
+            </form>
+          )}
         </div>
+      )}
+      {showModal && (
+        <ConfirmationModal
+          Modaltext="You will not be able to edit dates and duration. 
+              Are you sure you want to submit the form?"
+          handleConfirmation={handleConfirmation}
+        />
       )}
     </div>
   );

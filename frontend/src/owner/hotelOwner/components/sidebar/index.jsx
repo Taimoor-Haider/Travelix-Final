@@ -14,11 +14,15 @@ import "./Sidebar.css"; // Assuming you have a corresponding CSS file for stylin
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { loginSelector } from "../../../../features/auth/loginSlice";
-
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../../../../features/auth/loginSlice";
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   const { userInfo } = useSelector(loginSelector);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const toggleSidebar = () => setCollapsed(!collapsed);
 
   const menuItem = [
@@ -30,6 +34,13 @@ const Sidebar = () => {
     name: "Admin Name",
     imageUrl:
       "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg", // Placeholder image, replace with actual profile image URL
+  };
+
+  const handleLogout = () => {
+    console.log("Clicked");
+    dispatch(logoutUser());
+    navigate("/login");
+    window.location.reload();
   };
 
   return (
@@ -68,7 +79,7 @@ const Sidebar = () => {
       <div className={`sidebar-footer ${collapsed ? "collapsed" : ""}`}>
         <Link className={`${collapsed ? "footer-collapsed" : ""}`}>
           <FaSignOutAlt />
-          {!collapsed && <span>Logout</span>}
+          {!collapsed && <span onClick={handleLogout}>Logout</span>}
         </Link>
       </div>
     </div>

@@ -5,7 +5,7 @@ const tourSchema = new mongoose.Schema({
   place: {
     type: String,
     required: false,
-    minlength: 5,
+    minlength: 3,
     maxlength: 277,
   },
   title: { type: String, required: true, minlength: 3, maxlength: 255 },
@@ -17,7 +17,6 @@ const tourSchema = new mongoose.Schema({
   description: {
     type: String,
     required: true,
-    minlength: 30,
     maxlength: 1000,
   },
 

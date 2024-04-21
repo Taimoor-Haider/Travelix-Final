@@ -125,7 +125,7 @@ function RegisterScreen() {
             {error ? <Message>{error}</Message> : ""}
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="name1" value="Your name" />
+                <Label htmlFor="name1" value="Your name*" />
               </div>
               <TextInput
                 id="name1"
@@ -138,7 +138,7 @@ function RegisterScreen() {
             </div>
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="email" value="Your email" />
+                <Label htmlFor="email" value="Your email*" />
               </div>
               <TextInput
                 id="email"
@@ -151,7 +151,7 @@ function RegisterScreen() {
             </div>
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="phone" value="Your phone" />
+                <Label htmlFor="phone" value="Your phone*" />
               </div>
               <TextInput
                 id="phone"
@@ -164,7 +164,7 @@ function RegisterScreen() {
             </div>
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="password" value="Your password" />
+                <Label htmlFor="password" value="Your password*" />
               </div>
               <TextInput
                 id="password"
@@ -177,7 +177,7 @@ function RegisterScreen() {
             </div>
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="confirm-password" value="Confirm password" />
+                <Label htmlFor="confirm-password" value="Confirm password*" />
               </div>
               <TextInput
                 id="confirm-password"

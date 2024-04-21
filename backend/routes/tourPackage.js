@@ -83,7 +83,7 @@ router.post("/", async (req, res) => {
     console.log("tour Saved");
     res.status(200).send(tour);
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    res.status(500).send(error.message);
   }
 });
 

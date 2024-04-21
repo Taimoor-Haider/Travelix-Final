@@ -10,13 +10,12 @@ const router = require("express").Router();
 // Get all feedbacks
 router.get("/", async (req, res) => {
   try {
-    const feedbacks = await Feedback.find();
+    const feedbacks = await Feedback.find().populate("user"); // Assuming 'userId' is the field referencing the User table
     res.json(feedbacks);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
-
 // Get feedback by ID
 router.get("/:id", getFeedback, (req, res) => {
   res.json(res.feedback);
@@ -38,7 +37,6 @@ router.post("/", async (req, res) => {
     const hotel = await Hotel.findById(req.body.targetId);
     const tour = await Tour.findById(req.body.targetId);
 
-
     if (car) {
       await Vehicle.findByIdAndUpdate(req.body.targetId, {
         $push: { feedbacks: newFeedback._id },
@@ -57,7 +55,6 @@ router.post("/", async (req, res) => {
         $inc: { numberOfReviews: 1 },
       });
       await updateRating(Tour, req.body.targetId);
-
     } else {
       throw new Error("Invalid target ID");
     }
