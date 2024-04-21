@@ -14,6 +14,7 @@ import {
   hotelListSelector,
 } from "../../../features/hotelOwner/hotelListSlice";
 import ConfirmationModal from "../../../components/ConfirmationModal";
+
 function HotelPage() {
   const { action } = useParams();
   const { userInfo } = useSelector(loginSelector);
@@ -24,17 +25,21 @@ function HotelPage() {
   const [hotelName, setHotelName] = useState("");
   const [hotelChain, setHotelChain] = useState("");
   const [location, setLocation] = useState("");
+  // const [roomType, setRoomType] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [description, setDescription] = useState("");
   const [amenities, setEmenities] = useState([""]);
   const [policies, setPolicies] = useState([""]);
   const [additionalServices, setAdditionalServices] = useState([""]);
   const [maxGuestsAllowed, setMaxGuestsAllowed] = useState(1);
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState(1);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [submittingLoading, setSubmittingLoading] = useState(false);
+  const [latitude, setLatitude] = useState();
+  const [longitude, setLongitude] = useState();
+  const [submitloading, setSubmitloading] = useState(false);
   const [submittingError, setSubmittingError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
   const handleEmenitiesChange = (emenities) => {
     setEmenities(emenities);
   };
@@ -52,29 +57,54 @@ function HotelPage() {
   const handlePriceChange = (e) => {
     const inputValue = e.target.value;
     // Check if the input value is not empty and is not a negative number
-    if (inputValue === "" || parseFloat(inputValue) >= 0) {
+    if (inputValue === "" || parseFloat(inputValue) >= 1) {
       // Update the price state only if it's either empty or a non-negative number
       setPrice(inputValue);
     }
   };
+
   const handlePersonsAllowedChange = (e) => {
     const inputValue = e.target.value;
     // Check if the input value is not empty and is not a negative number
-    if (inputValue === "" || parseInt(inputValue) >= 0) {
+    if (inputValue === "" || parseInt(inputValue) >= 1) {
       // Update the personsAllowed state only if it's either empty or a non-negative number
       setMaxGuestsAllowed(inputValue);
     }
   };
+
   const handleSubmit = async (e) => {
     console.log("Submitting");
 
     e.preventDefault();
 
+    // Check if any of the required fields are empty or contain only white spaces
+    if (
+      !hotelName.trim() ||
+      !hotelChain.trim() ||
+      !location.trim() ||
+      !description.trim() ||
+      amenities.some((amenity) => !amenity.trim()) ||
+      policies.some((policy) => !policy.trim()) ||
+      additionalServices.some((service) => !service.trim())
+    ) {
+      alert(
+        "Please fill out all fields and ensure they are not empty or contain only white spaces."
+      );
+      return; // Prevent form submission
+    }
+
     // Check if amenities are empty
     if (amenities.length === 0) {
       alert("Amenities cannot be empty. Please select at least one amenity.");
       return; // Prevent form submission
+    } else if (policies.length === 0) {
+      alert("Policies cannot be empty. Please select at least one Policy.");
+      return; // Prevent form submission
+    } else if (additionalServices.length === 0) {
+      alert("Additional Services must contain at least one.");
+      return; // Prevent form submission
     }
+
     setShowModal(true); // Show the confirmation modal
   };
 
@@ -83,23 +113,26 @@ function HotelPage() {
       try {
         if (selectedFiles.length === 0) {
           alert("Please select atleast one photo");
-          setShowModal(false);
+          setShowModal(false); // Show the confirmation
           return;
         } else {
-          setSubmittingLoading(true);
-          setShowModal(false);
+          setShowModal(false); // Hide the confirmation modal
+          setSubmitloading(true);
           const uploadedFileNames = await uploadPhoto(selectedFiles);
+
           const requestData = {
             hotelName: hotelName,
             location: location,
             hotelChain: hotelChain,
             images: uploadedFileNames,
             price: price,
+            // roomType: roomType,
             maxGuestsAllowed: maxGuestsAllowed,
             amenities: amenities.filter((amenity) => amenity !== ""), // Remove empty features
             description: description,
             hotelOwner: userInfo?._id,
-
+            latitude: latitude,
+            longitude: longitude,
             additionalServices: additionalServices.filter(
               (service) => service !== ""
             ),
@@ -110,27 +143,26 @@ function HotelPage() {
             "http://localhost:3000/api/hotels",
             requestData
           );
-          setSubmittingLoading(false);
           console.log("Response:", response.data);
           setHotelName("");
           setHotelChain("");
           setLocation("");
+          // setRoomType("");
           setAddedPhotos([]);
           setDescription("");
           setEmenities([""]);
           setPolicies([""]);
           setAdditionalServices([""]);
           setMaxGuestsAllowed(1);
-          setPrice(0);
+          setPrice(1);
           setSelectedFiles([]);
+          setLatitude();
+          setLongitude();
           navigate("/product");
         }
       } catch (error) {
-        const errorMessage =
-          error.response && error.response.data
-            ? error.response.data
-            : error.message;
-        setSubmittingError(errorMessage);
+        console.log(error.message);
+        setSubmittingError(error.response.data);
       }
       navigate("/product/hotels");
       window.location.reload();
@@ -275,16 +307,15 @@ function HotelPage() {
       )}
       {action === "new" && (
         <div>
-          {submittingLoading ? (
+          {submitloading ? (
             <Loader />
           ) : submittingError ? (
             <Message>{submittingError}</Message>
           ) : (
             <form onSubmit={handleSubmit}>
-              <h1 className="text-3xl text-center">Add Hotel</h1>
               <div>
                 <div className="mb-1 block">
-                  <Label htmlFor="name" value="Hotel Name" />
+                  <Label htmlFor="name" value="Hotel Name*" />
                 </div>
                 <TextInput
                   id="name"
@@ -297,7 +328,7 @@ function HotelPage() {
               </div>
               <div>
                 <div className="mb-1 block">
-                  <Label htmlFor="hotelChain" value="Hotel Chain" />
+                  <Label htmlFor="hotelChain" value="Hotel Chain*" />
                 </div>
                 <TextInput
                   id="hotelChain"
@@ -310,7 +341,7 @@ function HotelPage() {
               </div>
               <div>
                 <div className="mb-1 block">
-                  <Label htmlFor="location" value="Location" />
+                  <Label htmlFor="location" value="Location*" />
                 </div>
                 <TextInput
                   id="location"
@@ -361,7 +392,7 @@ function HotelPage() {
 
               <div>
                 <div className="mb-1 block">
-                  <Label htmlFor="desc" value="Description" />
+                  <Label htmlFor="desc" value="Description*" />
                 </div>
                 <p className="text-gray-500 text-sm">
                   description of the hotel
@@ -376,7 +407,7 @@ function HotelPage() {
                 />
                 <div>
                   <div className="mb-1 block">
-                    <Label htmlFor="Amenities" value="Emenities" />
+                    <Label htmlFor="Amenities" value="Emenities*" />
                   </div>
                   <p className="text-gray-500 text-sm">
                     Amenities of the hotel [🏊‍♂️ Access to swimming pool, 🍳
@@ -403,7 +434,7 @@ function HotelPage() {
                 <div className="grid sm:grid-cols-2 gap-2">
                   <div>
                     <div className="mb-1 block">
-                      <Label htmlFor="price" value="Price" />
+                      <Label htmlFor="price" value="Price*" />
                     </div>
 
                     <TextInput
@@ -445,7 +476,6 @@ function HotelPage() {
                   <Features
                     selected={additionalServices}
                     onChange={handleAditionalServicesChange}
-                    required={false}
                   />
                 </div>
                 <Button type="submit" className="mt-5">
@@ -453,6 +483,13 @@ function HotelPage() {
                 </Button>
               </div>
             </form>
+          )}
+          {showModal && (
+            <ConfirmationModal
+              Modaltext="You will not be able to edit dates and duration. 
+              Are you sure you want to submit the form?"
+              handleConfirmation={handleConfirmation}
+            />
           )}
         </div>
       )}

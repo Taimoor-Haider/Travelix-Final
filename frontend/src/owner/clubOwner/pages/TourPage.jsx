@@ -54,6 +54,17 @@ function TourPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (
+      !place.trim() ||
+      !title.trim() ||
+      !description.trim() ||
+      amenities.some((amenity) => !amenity.trim())
+    ) {
+      alert(
+        "Please fill out all fields and ensure they are not empty or contain only white spaces."
+      );
+      return; // Prevent form submission
+    }
     // Check if amenities are empty
     if (amenities.length === 0) {
       alert("Amenities cannot be empty. Please select at least one amenity.");
@@ -108,14 +119,10 @@ function TourPage() {
           setSelectedFiles([]);
         }
       } catch (error) {
-        const errorMessage =
-          error.response && error.response.data
-            ? error.response.data
-            : error.message;
-        setSubmittingError(errorMessage);
+        setSubmittingError(error.response.data);
       }
       navigate("/product/tours");
-      window.location.reload();
+      // window.location.reload();
     } else {
       setShowModal(false); // Hide the confirmation modal
     }
@@ -293,7 +300,6 @@ function TourPage() {
             <Message>{submittingError}</Message>
           ) : (
             <form onSubmit={handleSubmit}>
-              <h1 className="text-3xl text-center">Add Tour</h1>
               <div>
                 <div className="mb-1 block">
                   <Label htmlFor="place" value="Place*" />

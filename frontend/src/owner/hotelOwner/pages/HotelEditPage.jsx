@@ -22,6 +22,7 @@ function HotelEditPage() {
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     const fetchEditHotel = async () => {
       try {
@@ -47,6 +48,19 @@ function HotelEditPage() {
     setSelectedFiles(e.target.files);
   };
 
+  const handlePriceChange = (e) => {
+    const inputValue = e.target.value;
+    if (inputValue === "" || parseFloat(inputValue) >= 1) {
+      setHotel({ ...hotel, price: inputValue });
+    }
+  };
+  const handleGuestChange = (e) => {
+    const inputValue = e.target.value;
+    if (inputValue === "" || parseFloat(inputValue) >= 1) {
+      setHotel({ ...hotel, maxGuestsAllowed: inputValue });
+    }
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
@@ -54,13 +68,38 @@ function HotelEditPage() {
     if (hotel.amenities.length === 0) {
       alert("Amenities cannot be empty. Please select at least one amenity.");
       return; // Prevent form submission
+    } else if (hotel.policies.length === 0) {
+      alert("Policies cannot be empty. Please select at least one Policy.");
+      return; // Prevent form submission
+    } else if (hotel.additionalServices.length === 0) {
+      alert("Additional Services must contain at least one.");
+      return; // Prevent form submission
+    } // Check if any of the required fields are empty or contain only white spaces
+    else if (
+      !hotel.hotelName.trim() ||
+      !hotel.hotelChain.trim() ||
+      !hotel.location.trim() ||
+      !hotel.description.trim() ||
+      hotel.amenities.some((amenity) => !amenity.trim()) ||
+      hotel.policies.some((policy) => !policy.trim()) ||
+      hotel.additionalServices.some((service) => !service.trim())
+    ) {
+      alert(
+        "Please fill out all fields and ensure they are not empty or contain only white spaces."
+      );
+      return; // Prevent form submission
     }
+
     setShowModal(true); // Show the confirmation modal
   };
 
   const handleConfirmation = async (confirm) => {
     if (confirm) {
       try {
+        // Assuming selectedFiles is defined somewhere in your code
+        // const uploadedFileNames = await uploadPhoto(selectedFiles);
+        // console.log("Uplaoded file names: " + uploadedFileNames);
+        // console.log("Selected Files: " + selectedFiles);
         let uploadedFileNames = [];
         if (selectedFiles.length > 0) {
           uploadedFileNames = await uploadPhoto(selectedFiles);
@@ -73,31 +112,33 @@ function HotelEditPage() {
           hotelName: hotel.hotelName,
           location: hotel.location,
           hotelChain: hotel.hotelChain,
-          rentalCompanyName: hotel.rentalCompanyName,
+          // rentalCompanyName: hotel.rentalCompanyName,
           images:
             uploadedFileNames.length > 0 ? uploadedFileNames : hotel.images,
           price: hotel.price,
+          // roomType: hotel.roomType,
           maxGuestsAllowed: hotel.maxGuestsAllowed,
           amenities: hotel.amenities.filter((amenity) => amenity !== ""), // Remove empty features
           description: hotel.description,
           hotelOwner: userInfo?._id,
+          latitude: hotel.latitude,
+          longitude: hotel.longitude,
           additionalServices: hotel.additionalServices.filter(
             (service) => service !== ""
           ),
           policies: hotel.policies.filter((policy) => policy !== ""),
         };
+
         const response = await axios.put(
           `http://localhost:3000/api/hotels/${id}`,
           requestData
         );
+
         setEditLoading(false);
         console.log("Response:", response.data);
       } catch (error) {
-        const errorMessage =
-          error.response && error.response.data
-            ? error.response.data
-            : error.message;
-        setEditError(errorMessage);
+        setEditError(error.response.data);
+        console.log(error.response.data);
       }
       navigate("/product/hotels");
       window.location.reload();
@@ -133,12 +174,11 @@ function HotelEditPage() {
 
   return (
     <div>
-      <h1 className="text-3xl text-center">Edit Hotel</h1>
-
+      <h1>Edit Hotel</h1>
       {editLoading ? (
         <Loader />
       ) : editError ? (
-        <Message>{editError}</Message>
+        <Message>editError</Message>
       ) : (
         <form onSubmit={handleFormSubmit}>
           <div>
@@ -279,9 +319,10 @@ function HotelEditPage() {
                   placeholder="PKR"
                   required
                   value={hotel?.price || ""}
-                  onChange={(e) =>
-                    setHotel({ ...hotel, price: e.target.value })
-                  }
+                  // onChange={(e) =>
+                  //   setHotel({ ...hotel, price: e.target.value })
+                  // }
+                  onChange={handlePriceChange}
                 />
               </div>
               <div>
@@ -295,12 +336,14 @@ function HotelEditPage() {
                   placeholder="1"
                   required
                   value={hotel?.maxGuestsAllowed || ""}
-                  onChange={(e) =>
-                    setHotel({ ...hotel, maxGuestsAllowed: e.target.value })
-                  }
+                  // onChange={(e) =>
+                  //   setHotel({ ...hotel, maxGuestsAllowed: e.target.value })
+                  // }
+                  onChange={handleGuestChange}
                 />
               </div>
             </div>
+
             <div>
               <div className="mb-1 block">
                 <Label htmlFor="services" value="Additional services" />
@@ -314,7 +357,6 @@ function HotelEditPage() {
                 onChange={(selectedServices) =>
                   setHotel({ ...hotel, additionalServices: selectedServices })
                 }
-                required={false}
               />
             </div>
             <Button type="submit" className="mt-5">
@@ -323,6 +365,7 @@ function HotelEditPage() {
           </div>
         </form>
       )}
+
       {showModal && (
         <ConfirmationModal
           Modaltext="Are you sure you want to submit the form?"
