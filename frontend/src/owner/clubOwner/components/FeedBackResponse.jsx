@@ -19,7 +19,7 @@ function FeedBackResponse() {
       try {
         setLoading(true); // Set loading state to true before making the request
         const { data } = await axios.get(
-          `http://localhost:3000/api/reviews/${feedbackId}`
+          `https://travelix-backend-v2.vercel.app/api/reviews/${feedbackId}`
         );
         setFeedback(data);
         setLoading(false); // Set loading state to false after successful request
@@ -49,7 +49,7 @@ function FeedBackResponse() {
     };
 
     await axios
-      .post(`http://localhost:3000/api/responses`, reponse)
+      .post(`https://travelix-backend-v2.vercel.app/api/responses`, reponse)
       .then((res) => {
         navigate("/product");
       })

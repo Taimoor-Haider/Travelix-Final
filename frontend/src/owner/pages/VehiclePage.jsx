@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Button, Textarea, Label, TextInput } from "flowbite-react";
+import { Button, Textarea, Label, TextInput, Select } from "flowbite-react";
 import Features from "../components/Features";
 import axois from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,7 +25,7 @@ function VehiclePage() {
   console.log(userInfo);
   console.log(action);
   const [vehicleModel, setVehicleModel] = useState("");
-  const [vehicleType, setVehicleType] = useState("");
+  const [vehicleType, setVehicleType] = useState("Sedan");
   const [location, setLocation] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);
   // const [photoLink, setPhotoLink] = useState("");
@@ -119,7 +119,7 @@ function VehiclePage() {
           );
           console.log("Response:", response.data);
           setVehicleModel("");
-          setVehicleType("");
+          setVehicleType("sedan");
           setLocation("");
           setAddedPhotos([]);
           // setPhotoLink("");
@@ -132,17 +132,18 @@ function VehiclePage() {
           navigate("/product/vehicles");
         }
       } catch (error) {
-        console.log(error.message);
-        setSubmittingError(erroe.response.data);
+        const errorMessage =
+          error.response && error.response.data
+            ? error.response.data
+            : error.message;
+        setSubmittingError(errorMessage);
       }
-      navigate("./product/vehicles");
+      navigate("/product/vehicles");
       window.location.reload();
     } else {
       setShowModal(false);
     }
   };
-
-
 
   const uploadPhoto = async (files) => {
     const formData = new FormData();
@@ -165,6 +166,9 @@ function VehiclePage() {
     navigate(`/vehicleDetail/${id}`);
   };
 
+  const handleVehicleChange = (event) => {
+    setVehicleType(event.target.value);
+  };
   const handleDeleteVehicel = (id) => {
     dispatch(deleteVehicleById(id));
   };
@@ -223,10 +227,7 @@ function VehiclePage() {
                   onClick={handleDetails}
                 >
                   <div className="listing-img">
-                    <img
-                      src={`https://travelix-backend-v2.vercel.app/${vehicle.images[0]}`}
-                      alt="Vehicle"
-                    />
+                    <img src={`${vehicle.images[0]}`} alt="Vehicle" />
                   </div>
                   <div className="listing-details">
                     <h2 className="font-bold capitalize text-2xl mb-[4rem]">
@@ -306,15 +307,19 @@ function VehiclePage() {
                 <div className="mb-1 block">
                   <Label htmlFor="type" value="Vehicle Type" />
                 </div>
-                <TextInput
-                  id="type"
-                  type="text"
-                  placeholder="Type (e.g., Sedan)"
-                  required
+                <Select
+                  id="vehicle"
+                  name="vehicle"
                   value={vehicleType}
-                  onChange={(e) => setVehicleType(e.target.value)}
-                />
+                  required
+                  onChange={handleVehicleChange}
+                >
+                  <option value="Sedan">Sedan</option>
+                  <option value="SUV">SUV</option>
+                  <option value="Bus">Bus</option>
+                </Select>
               </div>
+
               <div>
                 <div className="mb-1 block">
                   <Label htmlFor="location" value="Location" />

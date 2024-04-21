@@ -48,7 +48,7 @@ const Sidebar = () => {
 
   const userProfile = {
     name: "Admin Name",
-    imageUrl: `http://localhost:3000/${userInfo?.image}`, // Placeholder image, replace with actual profile image URL
+    imageUrl: `${userInfo?.image}`, // Placeholder image, replace with actual profile image URL
   };
 
   // const handleLogout = () => {

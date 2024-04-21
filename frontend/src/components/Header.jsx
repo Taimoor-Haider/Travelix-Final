@@ -65,19 +65,21 @@ const Header = () => {
                 {userInfo?.email}
               </span>
             </Dropdown.Header>
-            <Dropdown.Item onClick={() => navigate("/profile")}>
-              Profile
-            </Dropdown.Item>
+            {!userInfo?.isTourOwner && (
+              <Dropdown.Item onClick={() => navigate("/profile")}>
+                Profile
+              </Dropdown.Item>
+            )}
             <Dropdown.Item onClick={() => navigate(`/bookings`)}>
               Bookings
             </Dropdown.Item>
-            {userInfo.isTourOwner && (
+            {userInfo?.isTourOwner && (
               <Dropdown.Item onClick={handleAdminPanel}>
                 Admin Panel
               </Dropdown.Item>
             )}
             <Dropdown.Divider />
-            {!userInfo.isTourOwner && (
+            {!userInfo?.isTourOwner && (
               <Dropdown.Item onClick={logout}>Sign out</Dropdown.Item>
             )}
           </Dropdown>
@@ -106,9 +108,11 @@ const Header = () => {
       </div>
 
       <Navbar.Collapse>
-        <Navbar.Link as={NavLink} to={"/tour"} active>
-          Tour
-        </Navbar.Link>
+        {!userInfo?.isTourOwner && (
+          <Navbar.Link as={NavLink} to={"/tour"} active>
+            Tour
+          </Navbar.Link>
+        )}
         <Navbar.Link as={NavLink} to={"/hotel"}>
           Hotel
         </Navbar.Link>

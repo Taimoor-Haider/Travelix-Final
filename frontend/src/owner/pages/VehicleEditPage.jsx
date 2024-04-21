@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Button, Textarea, Label, TextInput } from "flowbite-react";
+import { Button, Textarea, Label, TextInput, Select } from "flowbite-react";
 import Features from "../components/Features";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSelector } from "../../features/auth/loginSlice";
@@ -175,19 +175,23 @@ function VehicleEditPage() {
           </div>
           <div>
             <div className="mb-1 block">
-              <Label htmlFor="type" value="Vehicle Type*" />
+              <Label htmlFor="type" value="Vehicle Type" />
             </div>
-            <TextInput
-              id="type"
-              type="text"
-              placeholder="Type (e.g., Sedan)"
+            <Select
+              id="vehicle"
+              name="vehicle"
+              value={vehicle?.vehicleType}
               required
-              value={vehicle?.vehicleType || ""}
               onChange={(e) =>
                 setVehicle({ ...vehicle, vehicleType: e.target.value })
               }
-            />
+            >
+              <option value="Sedan">Sedan</option>
+              <option value="SUV">SUV</option>
+              <option value="Bus">Bus</option>
+            </Select>
           </div>
+
           <div>
             <div className="mb-1 block">
               <Label htmlFor="location" value="Location*" />
@@ -210,7 +214,7 @@ function VehicleEditPage() {
                 <div className="h-32 flex">
                   <img
                     className="rounded-2xl w-full object-cover"
-                    src={`https://travelix-backend-v2.vercel.app/${link}`}
+                    src={`${link}`}
                     alt="link"
                     key={link}
                   />

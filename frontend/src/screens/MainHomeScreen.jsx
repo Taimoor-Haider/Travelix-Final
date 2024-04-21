@@ -40,7 +40,8 @@ import user8 from "../assets/images/user (4).jpg";
 // CARD
 import iconBg from "../assets/icons/icon-bg.svg";
 import iconBgHover from "../assets/icons/icon-bg-hover.svg";
-
+import { useSelector } from "react-redux";
+import { loginSelector } from "../features/auth/loginSlice";
 const Card = (props) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -134,14 +135,16 @@ const MainHomeScreen = () => {
   const [vehicles, setVehicles] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [filteredVehicles, setFilteredVehicles] = useState([]);
-
+  const { userInfo } = useSelector(loginSelector);
   //Fetch Hotels
   useEffect(() => {
     const fetchHotels = async () => {
       setLoading(true);
       try {
         // Fetch hotels from the API
-        const response = await fetch("https://travelix-backend-v2.vercel.app/api/hotels");
+        const response = await fetch(
+          "https://travelix-backend-v2.vercel.app/api/hotels"
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch Hotels");
         }
@@ -159,7 +162,9 @@ const MainHomeScreen = () => {
       setLoading(true);
       try {
         // Fetch hotels from the API
-        const response = await fetch("https://travelix-backend-v2.vercel.app/api/vehicle");
+        const response = await fetch(
+          "https://travelix-backend-v2.vercel.app/api/vehicle"
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch Vehicles");
         }
@@ -177,7 +182,9 @@ const MainHomeScreen = () => {
       setLoading(true);
       try {
         // Fetch hotels from the API
-        const response = await fetch("https://travelix-backend-v2.vercel.app/api/tours");
+        const response = await fetch(
+          "https://travelix-backend-v2.vercel.app/api/tours"
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch Tours");
         }
@@ -193,7 +200,9 @@ const MainHomeScreen = () => {
 
     const fetchReview = async () => {
       try {
-        const response = await fetch("https://travelix-backend-v2.vercel.app/api/reviews");
+        const response = await fetch(
+          "https://travelix-backend-v2.vercel.app/api/reviews"
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
@@ -402,29 +411,31 @@ const MainHomeScreen = () => {
         </div>
       </section>
 
-      <section className="trending-container">
-        <div className="heading-Ucontainer">
-          <h1 className="section-heading">Top Rated Tours</h1>
-          {/* <BlueUnderline /> */}
-          <img src={BlueUnderline} />
-        </div>
+      {!userInfo?.isTourOwner && (
+        <section className="trending-container">
+          <div className="heading-Ucontainer">
+            <h1 className="section-heading">Top Rated Tours</h1>
+            {/* <BlueUnderline /> */}
+            <img src={BlueUnderline} />
+          </div>
 
-        <div className="trending">
-          {loading ? (
-            <Loader />
-          ) : error ? (
-            <Message>{error.message}</Message>
-          ) : tours.length > 0 ? (
-            <div className="flex flex-wrap justify-start items-center gap-[2rem]">
-              {filteredTours.map((tour) => (
-                <CardComponentTour key={tour._id} tour={tour} />
-              ))}
-            </div>
-          ) : (
-            <>{!loading && <Message color="info">No Tours found!</Message>}</>
-          )}
-        </div>
-      </section>
+          <div className="trending">
+            {loading ? (
+              <Loader />
+            ) : error ? (
+              <Message>{error.message}</Message>
+            ) : tours.length > 0 ? (
+              <div className="flex flex-wrap justify-start items-center gap-[2rem]">
+                {filteredTours.map((tour) => (
+                  <CardComponentTour key={tour._id} tour={tour} />
+                ))}
+              </div>
+            ) : (
+              <>{!loading && <Message color="info">No Tours found!</Message>}</>
+            )}
+          </div>
+        </section>
+      )}
 
       <section className="testimonial-section">
         <div className="heading-Ucontainer">
@@ -467,7 +478,7 @@ const MainHomeScreen = () => {
                   <div className="details">
                     <div className="imgBx">
                       <img
-                        src={`https://travelix-backend-v2.vercel.app/${review.user.image}`}
+                        src={`${review.user.image}`}
                         alt={review.user.name}
                       />
                     </div>

@@ -20,8 +20,6 @@ function Features({ selected = [], onChange }) {
     onChange(newFeatures);
   };
 
-
-
   return (
     <div>
       {/* <h2 className="py-2 font-bold inline-block"></h2> */}
@@ -78,7 +76,6 @@ function Features({ selected = [], onChange }) {
         </svg>
         Add Feature
       </button>
-  
     </div>
   );
 }

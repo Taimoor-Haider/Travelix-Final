@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Button, Textarea, Label, TextInput } from "flowbite-react";
+import { Button, Textarea, Label, TextInput, Select } from "flowbite-react";
 import Features from "../components/Features";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSelector } from "../../../features/auth/loginSlice";
@@ -54,16 +54,11 @@ function HotelEditPage() {
       setHotel({ ...hotel, price: inputValue });
     }
   };
-  
-  // const handleGuestChange = (e) => {
-  //   const inputValue = e.target.value;
-  //   if (inputValue === "" || parseFloat(inputValue) >= 1) {
-  //     setHotel({ ...hotel, maxGuestsAllowed: inputValue });
-  //   }
-  // };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    console.log("Inside submit button");
 
     // Check if amenities are empty
     if (hotel.amenities.length === 0) {
@@ -130,16 +125,24 @@ function HotelEditPage() {
           policies: hotel.policies.filter((policy) => policy !== ""),
         };
 
+        console.log("Request Data:-", requestData);
+
         const response = await axios.put(
           `https://travelix-backend-v2.vercel.app/api/hotels/${id}`,
           requestData
         );
 
+        console.log("Response: " + response);
+
         setEditLoading(false);
         console.log("Response:", response.data);
       } catch (error) {
-        setEditError(error.response.data);
-        console.log(error.response.data);
+        const errorMessage =
+          error.response && error.response.data
+            ? error.response.data
+            : error.message;
+        setEditError(errorMessage);
+        console.log(errorMessage);
       }
       navigate("/product/hotels");
       window.location.reload();
@@ -201,17 +204,21 @@ function HotelEditPage() {
             <div className="mb-1 block">
               <Label htmlFor="hotelChain" value="Hotel Chain" />
             </div>
-            <TextInput
+            <Select
               id="hotelChain"
-              type="text"
-              placeholder="Type (e.g., Luxury Collection)"
+              name="hotelChain"
               required
               value={hotel?.hotelChain || ""}
               onChange={(e) =>
                 setHotel({ ...hotel, hotelChain: e.target.value })
               }
-            />
+            >
+              <option value="Delux">Delux</option>
+              <option value="Exective">Exective</option>
+              <option value="Luxury">Luxury</option>
+            </Select>
           </div>
+
           <div>
             <div className="mb-1 block">
               <Label htmlFor="location" value="Location" />
@@ -232,7 +239,7 @@ function HotelEditPage() {
                 <div className="h-32 flex">
                   <img
                     className="rounded-2xl w-full object-cover"
-                    src={`https://travelix-backend-v2.vercel.app/${link}`}
+                    src={`${link}`}
                     alt="link"
                     key={link}
                   />
@@ -326,7 +333,6 @@ function HotelEditPage() {
                   onChange={handlePriceChange}
                 />
               </div>
-
             </div>
 
             <div>
