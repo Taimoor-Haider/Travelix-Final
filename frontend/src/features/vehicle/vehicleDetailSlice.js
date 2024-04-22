@@ -41,6 +41,7 @@ const vehicleDetailSlice = createSlice({
     setBooking: (state, { payload }) => {
       state.userBooking = payload;
     },
+
     setSuccess: (state) => {
       state.success = true;
     },
@@ -63,7 +64,9 @@ export default vehicleDetailSlice.reducer;
 export const fetchVehicle = (id) => async (dispatch, getState) => {
   try {
     dispatch(setLoading());
-    const { data } = await axios.get(`https://travelix-backend-v2.vercel.app/api/vehicle/${id}`);
+    const { data } = await axios.get(
+      `https://travelix-backend-v2.vercel.app/api/vehicle/${id}`
+    );
     dispatch(setVehicle(data));
     localStorage.setItem(
       "vehicle",

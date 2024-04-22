@@ -16,7 +16,10 @@ import { checkAvailibilitySlector } from "../features/vehicle/checkAvailibitySli
 function VechileCheckout() {
   const { userInfo } = useSelector(loginSelector);
   const { vehicle, vehicleBookingUserInfo } = useSelector(vehicleDetailSlector);
-  const { selectedDates, paymentType } = useSelector(checkAvailibilitySlector);
+  const { selectedDates, paymentType, hotelNumberOfDays } = useSelector(
+    checkAvailibilitySlector
+  );
+
   const options = {
     animationData: Logo,
     loop: true,
@@ -28,7 +31,7 @@ function VechileCheckout() {
     console.log("Booking Vehicle");
     const bookedItem = {
       item: vehicle._id,
-      price: vehicle.price,
+      price: vehicle.price * hotelNumberOfDays,
       bookingDate: selectedDates,
     };
 
@@ -84,7 +87,7 @@ function VechileCheckout() {
               </div>
               <div>
                 <p className="font-bold text-[1.5rem] tracking-widest">
-                  Rs: {vehicle?.price}/-
+                  Rs: {vehicle?.price * hotelNumberOfDays}/-
                 </p>
               </div>
             </div>

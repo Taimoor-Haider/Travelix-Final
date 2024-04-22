@@ -19,7 +19,11 @@ import {
   checkAvailability,
   checkAvailibilitySlector,
 } from "../features/vehicle/checkAvailibitySlice";
-import { addSelectedDates } from "../features/vehicle/checkAvailibitySlice";
+import {
+  addSelectedDates,
+  addNumbeOfDays,
+} from "../features/vehicle/checkAvailibitySlice";
+import calculateNumberOfDays from "../utils/numberOfDaysCalculator";
 function VehicleDetailScreen() {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -49,6 +53,7 @@ function VehicleDetailScreen() {
   const handleCheckAvailibility = (startDate, finishDate) => {
     if (vehicle) {
       dispatch(addSelectedDates({ startDate, finishDate }));
+      dispatch(addNumbeOfDays(calculateNumberOfDays(startDate, finishDate)));
       dispatch(checkAvailability(startDate, finishDate, vehicle._id));
     }
   };
@@ -115,7 +120,9 @@ function VehicleDetailScreen() {
                 <ul class="w-96 text-surface dark:text-white">
                   <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10 flex justify-between items-center">
                     <span className="text-2xl font-semibold">Price</span>
-                    <p className="text-2xl font-medium">{vehicle.price} Rs/-</p>
+                    <p className="text-2xl font-medium">
+                      {vehicle.price} Rs/- per day
+                    </p>
                   </li>
                   <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10 flex justify-start items-center">
                     <span className="text-2xl font-semibold">

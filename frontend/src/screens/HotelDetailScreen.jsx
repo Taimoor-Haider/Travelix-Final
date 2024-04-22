@@ -11,11 +11,14 @@ import DatepickerComponent from "../components/DatepickerComponent";
 import EmenitiesModal from "../components/EmenitiesModal";
 import FeedBackSection from "../ui/FeedBackSection";
 import { Button } from "flowbite-react";
+import calculateNumberOfDays from "../utils/numberOfDaysCalculator";
+
 import {
   fetchHotel,
   hotelDetailSelector,
 } from "../features/hotel/hotelDetailSlice";
 import {
+  addNumbeOfDays,
   checkAvailibilitySlector,
   checkHotelAvailability,
 } from "../features/hotel/checkAvailibilitySlice";
@@ -50,6 +53,7 @@ function HotelDetailScreen() {
   const handleCheckAvailibility = (startDate, finishDate) => {
     if (hotel) {
       dispatch(addSelectedDates({ startDate, finishDate }));
+      dispatch(addNumbeOfDays(calculateNumberOfDays(startDate, finishDate)));
       dispatch(checkHotelAvailability(startDate, finishDate, hotel._id));
     }
   };
@@ -112,7 +116,9 @@ function HotelDetailScreen() {
                 <ul class="w-96 text-surface dark:text-white">
                   <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10 flex justify-between items-center">
                     <span className="text-2xl font-semibold">Price</span>
-                    <p className="text-2xl font-medium">{hotel.price} Rs/-</p>
+                    <p className="text-2xl font-medium">
+                      {hotel.price} Rs/- per day
+                    </p>
                   </li>
                   <li class="w-full border-b-2 border-neutral-100 py-4 dark:border-white/10 flex justify-start items-center">
                     <span className="text-2xl font-semibold">

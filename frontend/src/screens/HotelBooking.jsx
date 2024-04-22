@@ -71,7 +71,7 @@ function HotelBooking() {
                       <strong>{`${hotel.rating.toFixed(2)}`}</strong> (
                       {hotel.noOfReviews} reviews)
                     </p>
-                    <p>{`${hotel.price} Rs/-`}</p>
+                    <p>{`${hotel.price} Rs/- per day`}</p>
                   </div>
                 </div>
               </div>
@@ -97,7 +97,12 @@ function HotelBooking() {
                   <li className="mt-auto flex justify-between items-center">
                     <p className="text-lg font-bold">Total Bill</p>
                     <p className="text-lg font-semibold">
-                      {`Rs ${hotel.price}/-`}
+                      {`Rs ${
+                        calculateNumberOfDays(
+                          selectedDates.startDate,
+                          selectedDates.finishDate
+                        ) * hotel.price
+                      }`}
                     </p>
                   </li>
                   <li className="mt-auto flex justify-between items-center">

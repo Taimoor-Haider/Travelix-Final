@@ -23,7 +23,9 @@ function VehicleBooking() {
   }, [dispatch, id]);
 
   const { loading, vehicle, error } = useSelector(vehicleDetailSlector);
-  const { selectedDates } = useSelector(checkAvailibilitySlector);
+  const { selectedDates, hotelNumberOfDays } = useSelector(
+    checkAvailibilitySlector
+  );
   const handleCheckout = () => {
     navigate("/login?redirect=/vehicle/BookingInfo");
   };
@@ -96,7 +98,7 @@ function VehicleBooking() {
                   <li className="mt-auto flex justify-between items-center">
                     <p className="text-lg font-bold">Total Bill</p>
                     <p className="text-lg font-semibold">
-                      {`Rs ${vehicle.price}/-`}
+                      {`Rs ${vehicle.price * hotelNumberOfDays}/-`}
                     </p>
                   </li>
                   <li className="mt-auto flex justify-between items-center">

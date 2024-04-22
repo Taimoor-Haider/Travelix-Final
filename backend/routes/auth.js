@@ -361,4 +361,40 @@ router.put("/updateRoleForUser", async (req, res) => {
   }
 });
 
+router.put("/change-password", async (req, res) => {
+  const { userId, oldPassword, newPassword } = req.body;
+
+  console.log("Old Password", oldPassword);
+  console.log("New Password", newPassword);
+
+  try {
+    // Find user by userId
+    const user = await User.findById(userId);
+    console.log("User", user);
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    // Check if old password matches
+    const isValidPassword = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isValidPassword) {
+      return res.status(400).send("Old password is incorrect");
+    }
+
+    // Hash the new password
+
+    // Update the user's password
+    user.password = newPassword;
+    console.log("User password", user);
+    await user.save();
+
+    res.status(200).send("Password changed successfully");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
+
 module.exports = router;

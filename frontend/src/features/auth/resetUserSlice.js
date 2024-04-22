@@ -49,7 +49,7 @@ export const resetUser =
 
       dispatch(setLoading(true));
       const { data } = await axios.post(
-        `http://localhost:3000/api/auth/resetUserInfo`,
+        `https://travelix-backend-v2.vercel.app/api/auth/resetUserInfo`,
         {
           _id,
           name,

@@ -9,6 +9,10 @@ const selectedDatesFromLocalStorage = localStorage.getItem("hotelSelectedDates")
 const paymentTypeFromLocalStorage = localStorage.getItem("hotelPaymentType")
   ? JSON.parse(localStorage.getItem("hotelPaymentType"))
   : "";
+
+const numberOfDaysFromLocalStorage = localStorage.getItem("numberOfDays")
+  ? Number(JSON.parse(localStorage.getItem("numberOfDays")))
+  : 0;
 // Initial state
 const initialState = {
   selectedDates: selectedDatesFromLocalStorage,
@@ -16,6 +20,7 @@ const initialState = {
   isAvailible: false,
   availibilityError: null,
   paymentType: paymentTypeFromLocalStorage,
+  numberOfDays: numberOfDaysFromLocalStorage,
 };
 
 // Create slice
@@ -44,6 +49,9 @@ const checkAvailibilitySlice = createSlice({
     setPaymentType: (state, { payload }) => {
       state.paymentType = payload;
     },
+    setNumberOfDays: (state, { payload }) => {
+      state.numberOfDays = payload;
+    },
   },
 });
 
@@ -54,6 +62,7 @@ export const {
   setAvailibilityError,
   setSelectedDates,
   setPaymentType,
+  setNumberOfDays,
 } = checkAvailibilitySlice.actions;
 export const checkAvailibilitySlector = (state) => state.checkHotelAvailibility;
 export default checkAvailibilitySlice.reducer;
@@ -101,6 +110,16 @@ export const addSelectedDates = (dates) => async (dispatch) => {
   // Save the dates to local storage
   try {
     localStorage.setItem("hotelSelectedDates", JSON.stringify(dates));
+  } catch (error) {
+    console.error("Error saving dates to local storage:", error);
+  }
+};
+
+export const addNumbeOfDays = (days) => async (dispatch) => {
+  dispatch(setNumberOfDays(days));
+  // Save the dates to local storage
+  try {
+    localStorage.setItem("numberOfDays", JSON.stringify(days));
   } catch (error) {
     console.error("Error saving dates to local storage:", error);
   }

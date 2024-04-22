@@ -17,7 +17,9 @@ import { checkAvailibilitySlector } from "../features/hotel/checkAvailibilitySli
 function HotelCheckout() {
   const { userInfo } = useSelector(loginSelector);
   const { hotel, hotelBookingUserInfo } = useSelector(hotelDetailSelector);
-  const { selectedDates, paymentType } = useSelector(checkAvailibilitySlector);
+  const { selectedDates, paymentType, numberOfDays } = useSelector(
+    checkAvailibilitySlector
+  );
   const navigate = useNavigate();
   const options = {
     animationData: Logo,
@@ -29,7 +31,7 @@ function HotelCheckout() {
   const handleBooking = (paymentMethod) => {
     const bookedItem = {
       item: hotel._id,
-      price: hotel.price,
+      price: hotel.price * numberOfDays,
       bookingDate: selectedDates,
     };
 
@@ -79,7 +81,7 @@ function HotelCheckout() {
               </div>
               <div>
                 <p className="font-bold text-[1.5rem] tracking-widest">
-                  Rs: {hotel?.price}/-
+                  Rs: {hotel?.price * numberOfDays} Rs/-
                 </p>
               </div>
             </div>
